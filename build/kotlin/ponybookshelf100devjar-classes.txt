@@ -1,1 +1,0 @@
-/mnt/data/Files/Projects/Programming/InfDev/PonyBookshelfLib/build/classes/kotlin/main/io/github/mg138/bookshelf/BookshelfLib.class
