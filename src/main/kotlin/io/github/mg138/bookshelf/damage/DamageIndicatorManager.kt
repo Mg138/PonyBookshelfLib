@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.decoration.ArmorStandEntity
+import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import java.util.*
@@ -60,11 +61,11 @@ object DamageIndicatorManager {
         val r = random * Math.PI * 2
 
         val x = on.x + cos(r) / 2
-        val y = on.y + on.heightOffset + random - 0.7
+        val y = on.y + random / 2 + on.heightOffset - 1
         val z = on.z + sin(r) / 2
 
         val xV = cos(r) / 6
-        val yV = 0.3
+        val yV = 0.1
         val zV = sin(r) / 6
 
         val indicator = Indicator(damage, type, world, x, y, z)

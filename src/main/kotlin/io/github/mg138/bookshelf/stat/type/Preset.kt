@@ -30,7 +30,7 @@ object Preset {
         val DAMAGE_TEMPUS =
             object : DamageType(Main.modId - "damage_tempus") {
                 init {
-                    numberColor = TextColor.parse("#dcffa0")!!
+                    numberColor = TextColor.parse("#ffe494")!!
                 }
             }
 
