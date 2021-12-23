@@ -22,6 +22,7 @@ minecraft {}
 
 repositories {
     maven("https://maven.shedaniel.me/")
+    maven("https://maven.nucleoid.xyz")
     mavenCentral()
 }
 
@@ -43,6 +44,11 @@ dependencies {
 
     val clothConfigVersion: String by project
     modApi("me.shedaniel.cloth:cloth-config-fabric:$clothConfigVersion") {
+        exclude("net.fabricmc.fabric-api")
+    }
+
+    val polymerVersion: String by project
+    modApi("eu.pb4:polymer:$polymerVersion") {
         exclude("net.fabricmc.fabric-api")
     }
 

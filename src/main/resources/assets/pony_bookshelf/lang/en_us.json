@@ -1,0 +1,34 @@
+{
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_tempus": " Tempest Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_tempus.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_aqua": " Water Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_aqua.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_ignis": " Flame Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_ignis.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_physical": " Physical Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_physical.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_true": " True Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_true.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_bleed": " Bleeding Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_bleed.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_terra": " Earth Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_terra.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_umbra": " Dark Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_umbra.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_lumen": " Light Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_lumen.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_none": "<ICON> Unknown Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_none.indicator": "<ICON> %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder": "<ICON> Thunder Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder.indicator": "<ICON> %s"
+}

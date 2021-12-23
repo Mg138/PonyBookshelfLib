@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier
 import java.util.concurrent.CompletableFuture
 
 object ItemIdSuggestion : SuggestionProvider<ServerCommandSource> {
-    const val id = "${Main.modId}:item_id"
+    const val id = "item_id"
 
     val ids
         get() = ServerItemManager.ids.map { it.toString() }
