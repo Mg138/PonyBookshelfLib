@@ -6,14 +6,13 @@ import net.minecraft.text.LiteralText
 import net.minecraft.text.MutableText
 import net.minecraft.text.TextColor
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 
 
 abstract class StatType(
     val id: Identifier
 ) {
-    var numberColor: TextColor = TextColor.fromFormatting(Formatting.WHITE)!!
+    var numberColor: TextColor = TextColor.fromRgb(0xFFFFFF)
 
     constructor(id: Identifier, numberColor: TextColor?) : this(id) {
         numberColor?.let {

@@ -7,15 +7,17 @@ import io.github.mg138.bookshelf.stat.type.event.AfterDamageListener
 import io.github.mg138.bookshelf.stat.type.event.OnDamageListener
 import io.github.mg138.bookshelf.stat.type.template.*
 import io.github.mg138.bookshelf.stat.utils.StatUtil
+import io.github.mg138.bookshelf.utils.EntityUtil.getDisplayPos
 import io.github.mg138.bookshelf.utils.ObjectUtil
+import io.github.mg138.bookshelf.utils.ParticleUtil.spawnParticles
 import io.github.mg138.bookshelf.utils.minus
 import net.minecraft.entity.EntityGroup
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.ParticleTypes
-import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.TextColor
 import net.minecraft.util.ActionResult
+import net.minecraft.util.math.Vec3d
 import java.lang.Double.min
 
 @Suppress("UNUSED")
@@ -24,66 +26,74 @@ object Preset {
         val DAMAGE_TRUE =
             object : DamageType(Main.modId - "damage_true") {}
 
+        const val DAMAGE_PHYSICAL_COLOR = 0xf5ab3d
         val DAMAGE_PHYSICAL =
             object : DamageType(Main.modId - "damage_physical") {
                 init {
-                    numberColor = TextColor.parse("#f5ab3d")!!
+                    numberColor = TextColor.fromRgb(DAMAGE_PHYSICAL_COLOR)
                 }
             }
 
+        const val DAMAGE_TERRA_COLOR = 0x7bb651
         val DAMAGE_TERRA =
             object : DamageType(Main.modId - "damage_terra") {
                 init {
-                    numberColor = TextColor.parse("#7bb651")!!
+                    numberColor = TextColor.fromRgb(DAMAGE_TERRA_COLOR)
                 }
             }
-
+        const val DAMAGE_TEMPUS_COLOR = 0xffe494
         val DAMAGE_TEMPUS =
             object : DamageType(Main.modId - "damage_tempus") {
                 init {
-                    numberColor = TextColor.parse("#ffe494")!!
+                    numberColor = TextColor.fromRgb(DAMAGE_TEMPUS_COLOR)
                 }
             }
 
+        const val DAMAGE_IGNIS_COLOR = 0xf8822f
         val DAMAGE_IGNIS =
             object : DamageType(Main.modId - "damage_ignis") {
                 init {
-                    numberColor = TextColor.parse("#f8822f")!!
+                    numberColor = TextColor.fromRgb(DAMAGE_IGNIS_COLOR)
                 }
             }
 
+        const val DAMAGE_AQUA_COLOR = 0x7291ff
         val DAMAGE_AQUA =
             object : DamageType(Main.modId - "damage_aqua") {
                 init {
-                    numberColor = TextColor.parse("#7291ff")!!
+                    numberColor = TextColor.fromRgb(DAMAGE_AQUA_COLOR)
                 }
             }
 
+        const val DAMAGE_LUMEN_COLOR = 0xfff46e
         val DAMAGE_LUMEN =
             object : DamageType(Main.modId - "damage_lumen") {
                 init {
-                    numberColor = TextColor.parse("#fff46e")!!
+                    numberColor = TextColor.fromRgb(DAMAGE_LUMEN_COLOR)
                 }
             }
 
+        const val DAMAGE_UMBRA_COLOR = 0x5e5e5e
         val DAMAGE_UMBRA =
             object : DamageType(Main.modId - "damage_umbra") {
                 init {
-                    numberColor = TextColor.parse("#5e5e5e")!!
+                    numberColor = TextColor.fromRgb(DAMAGE_UMBRA_COLOR)
                 }
             }
 
+        const val DAMAGE_NONE_COLOR = 0xa0a0a0
         val DAMAGE_NONE =
             object : DamageType(Main.modId - "damage_none") {
                 init {
-                    numberColor = TextColor.parse("#a0a0a0")!!
+                    numberColor = TextColor.fromRgb(DAMAGE_NONE_COLOR)
                 }
             }
 
+        const val DAMAGE_BLEED_COLOR = 0xff7474
         val DAMAGE_BLEED =
             object : DamageType(Main.modId - "damage_bleed") {
                 init {
-                    numberColor = TextColor.parse("#ff7474")!!
+                    numberColor = TextColor.fromRgb(DAMAGE_BLEED_COLOR)
                 }
             }
 
@@ -165,11 +175,13 @@ object Preset {
                         DamageManager.queueDamage(damagee, type, other * p)
                     }
                 }
-                (event.world as? ServerWorld)?.let {
-                    val pos = damagee.pos
-                    val count = (15 * p).toInt()
-                    it.spawnParticles(ParticleTypes.CRIT, pos.x, damagee.eyeY - 2.0, pos.z, count, 0.0, 1.0, 0.0, 0.5)
-                }
+
+                val pos = damagee.getDisplayPos()
+                val dPos = Vec3d(0.0, 1.0, 0.0)
+                val count = (15 * p).toInt()
+
+                damagee.spawnParticles(ParticleTypes.CRIT, pos, count, dPos, 0.5)
+
                 return ActionResult.PASS
             }
         }

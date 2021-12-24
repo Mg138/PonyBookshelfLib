@@ -7,6 +7,7 @@ import io.github.mg138.bookshelf.stat.type.StatType
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.damage.EntityDamageSource
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.ActionResult
@@ -29,28 +30,23 @@ object DamageManager {
         }
     }
 
-    private fun resolveDamage(damagee: LivingEntity, damager: Entity) {
-        map[damagee]?.also { damages ->
-            val source = EntityDamageSource(damager.entityName, damager)
+    fun resolveDamage(damagee: LivingEntity, damager: Entity? = null, source: DamageSource = DamageSource.GENERIC) {
+        map[damagee]?.onEach { (type, stat) ->
+            val damage = stat.result()
 
-            damages.forEach { (type, stat) ->
-                val damage = stat.result()
+            damagee.damage(source, damage.toFloat())
+            DamageIndicatorManager.displayDamage(damage, type, damagee)
 
-                damagee.damage(source, damage.toFloat())
-                DamageIndicatorManager.displayDamage(damage, type, damagee)
+            if (damager is LivingEntity) {
+                val item = damager.mainHandStack.item
+                if (item is BookStatedItem) {
+                    item.afterAttackEntity(damager, damagee)
 
-                if (damager is LivingEntity) {
-                    val item = damager.mainHandStack.item
-                    if (item is BookStatedItem) {
-                        item.afterAttackEntity(damager, damagee)
-
-                        if (damagee is BookStatedEntity<*>) {
-                            damagee.afterBeingAttacked(damager, item)
-                        }
+                    if (damagee is BookStatedEntity<*>) {
+                        damagee.afterBeingAttacked(damager, item)
                     }
                 }
             }
-
         }?.clear()
 
         map.remove(damagee)
@@ -76,7 +72,7 @@ object DamageManager {
             damagee.onBeingAttacked(item, damager, world, hand, hitResult)
         }
 
-        resolveDamage(damagee, damager)
+        resolveDamage(damagee, damager, DamageSource.player(damager))
 
         return result
     }

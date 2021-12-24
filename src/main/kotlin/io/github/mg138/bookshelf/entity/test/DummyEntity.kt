@@ -8,6 +8,7 @@ import io.github.mg138.bookshelf.stat.utils.StatMap
 import io.github.mg138.bookshelf.utils.minus
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.SpawnGroup
@@ -44,25 +45,29 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
 
     override fun getPolymerEntityType(): EntityType<VillagerEntity> = EntityType.VILLAGER
 
+    override fun getEquippedStack(slot: EquipmentSlot?): ItemStack = ItemStack.EMPTY
+
     override fun getArmorItems() = listOf<ItemStack>()
 
     override fun equipStack(slot: EquipmentSlot?, stack: ItemStack?) {
         throw IllegalArgumentException("Dummy shouldn't have armor")
     }
 
-    override fun getEquippedStack(slot: EquipmentSlot?): ItemStack {
-        return ItemStack.EMPTY
+    override fun getMainArm() = Arm.RIGHT
+
+    override fun isPushable() = false
+
+    override fun isPushedByFluids() = false
+
+    override fun pushAway(entity: Entity?) {
     }
 
-    override fun getMainArm(): Arm {
-        return Arm.RIGHT
+    override fun pushAwayFrom(entity: Entity?) {
     }
 
     override fun applyDamage(source: DamageSource?, amount: Float) {
-        return
     }
 
     override fun takeKnockback(strength: Double, x: Double, z: Double) {
-        return
     }
 }

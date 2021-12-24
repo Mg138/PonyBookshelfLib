@@ -2,6 +2,7 @@ package io.github.mg138.bookshelf.damage
 
 import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.StatType
+import io.github.mg138.bookshelf.utils.EntityUtil.getDisplayPos
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.Entity
@@ -13,11 +14,14 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 object DamageIndicatorManager {
+    private val random = Random()
+
     class Indicator(
         damage: Double, type: StatType,
         world: World, x: Double, y: Double, z: Double
     ) : ArmorStandEntity(world, x, y, z) {
         override fun isMarker() = true
+        override fun isAttackable() = false
 
         init {
             noClip = true
@@ -54,14 +58,15 @@ object DamageIndicatorManager {
         }
     }
 
-    fun displayDamage(damage: Double, type: StatType, on: Entity) {
-        val world = on.world
-        val random = Random().nextDouble()
+    fun displayDamage(damage: Double, type: StatType, entity: Entity) {
+        val world = entity.world
+        val pos = entity.getDisplayPos()
+        val random = random.nextDouble()
         val r = random * Math.PI * 2.0
 
-        val x = on.x + cos(r) / 2.0
-        val y = on.eyeY + random / 2.0 - 2.0
-        val z = on.z + sin(r) / 2.0
+        val x = pos.x + cos(r) / 2.0
+        val y = pos.y + random / 2.0
+        val z = pos.z + sin(r) / 2.0
 
         val xV = cos(r) / 6.0
         val yV = 0.15
