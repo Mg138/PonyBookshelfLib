@@ -57,15 +57,15 @@ object DamageIndicatorManager {
     fun displayDamage(damage: Double, type: StatType, on: Entity) {
         val world = on.world
         val random = Random().nextDouble()
-        val r = random * Math.PI * 2
+        val r = random * Math.PI * 2.0
 
-        val x = on.x + cos(r) / 2
-        val y = on.y + random / 2 + on.heightOffset - 1
-        val z = on.z + sin(r) / 2
+        val x = on.x + cos(r) / 2.0
+        val y = on.eyeY + random / 2.0 - 2.0
+        val z = on.z + sin(r) / 2.0
 
-        val xV = cos(r) / 6
-        val yV = 0.1
-        val zV = sin(r) / 6
+        val xV = cos(r) / 6.0
+        val yV = 0.15
+        val zV = sin(r) / 6.0
 
         val indicator = Indicator(damage, type, world, x, y, z)
         indicator.velocity = Vec3d(xV, yV, zV)

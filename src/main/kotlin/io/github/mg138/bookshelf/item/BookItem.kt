@@ -8,6 +8,7 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
+import net.minecraft.util.registry.Registry
 
 abstract class BookItem(
     val id: Identifier,
@@ -21,4 +22,8 @@ abstract class BookItem(
     override fun getPolymerCustomModelData(itemStack: ItemStack, player: ServerPlayerEntity?) = customModelData
 
     override fun damage(source: DamageSource) = false
+
+    open fun register() {
+        Registry.register(Registry.ITEM, id, this)
+    }
 }

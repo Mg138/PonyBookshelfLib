@@ -1,5 +1,6 @@
 package io.github.mg138.bookshelf.damage
 
+import io.github.mg138.bookshelf.entity.BookStatedEntity
 import io.github.mg138.bookshelf.item.BookStatedItem
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
@@ -7,7 +8,11 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.EntityDamageSource
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.ActionResult
+import net.minecraft.util.Hand
+import net.minecraft.util.hit.EntityHitResult
+import net.minecraft.world.World
 
 object DamageManager {
     private val map: MutableMap<LivingEntity, MutableMap<StatType, Stat>> = mutableMapOf()
@@ -24,9 +29,8 @@ object DamageManager {
         }
     }
 
-    fun resolveDamage(damagee: LivingEntity, damager: Entity) {
+    private fun resolveDamage(damagee: LivingEntity, damager: Entity) {
         map[damagee]?.also { damages ->
-            // TODO entity defense
             val source = EntityDamageSource(damager.entityName, damager)
 
             damages.forEach { (type, stat) ->
@@ -36,28 +40,48 @@ object DamageManager {
                 DamageIndicatorManager.displayDamage(damage, type, damagee)
 
                 if (damager is LivingEntity) {
-                    (damager.mainHandStack.item as? BookStatedItem)?.let {
-                        it.afterAttackEntity(damager, damagee)
+                    val item = damager.mainHandStack.item
+                    if (item is BookStatedItem) {
+                        item.afterAttackEntity(damager, damagee)
+
+                        if (damagee is BookStatedEntity<*>) {
+                            damagee.afterBeingAttacked(damager, item)
+                        }
                     }
                 }
             }
+
         }?.clear()
 
         map.remove(damagee)
     }
 
-    fun register() {
-        AttackEntityCallback.EVENT.register attackEntity@{ player, world, hand, entity, hitResult ->
-            if (entity !is LivingEntity) return@attackEntity ActionResult.PASS
-            if (entity is DamageIndicatorManager.Indicator) return@attackEntity ActionResult.FAIL
+    private fun onPlayerAttackEntity(
+        damager: PlayerEntity,
+        world: World,
+        hand: Hand,
+        damagee: Entity,
+        hitResult: EntityHitResult?
+    ): ActionResult {
+        if (damagee !is LivingEntity) return ActionResult.PASS
+        if (damagee.isDead) return ActionResult.FAIL
+        if (damagee is DamageIndicatorManager.Indicator) return ActionResult.FAIL
 
-            (player.mainHandStack.item as? BookStatedItem)?.onAttackEntity(
-                player,
-                world,
-                hand,
-                entity,
-                hitResult
-            ) ?: ActionResult.PASS
+        val item = damager.mainHandStack.item as? BookStatedItem ?: return ActionResult.PASS
+
+        val result = item.onAttackEntity(damager, world, hand, damagee, hitResult)
+        if (result != ActionResult.PASS) return result
+
+        if (damagee is BookStatedEntity<*>) {
+            damagee.onBeingAttacked(item, damager, world, hand, hitResult)
         }
+
+        resolveDamage(damagee, damager)
+
+        return result
+    }
+
+    fun register() {
+        AttackEntityCallback.EVENT.register(this::onPlayerAttackEntity)
     }
 }

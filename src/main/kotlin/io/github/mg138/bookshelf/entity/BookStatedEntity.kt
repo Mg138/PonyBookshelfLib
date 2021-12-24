@@ -1,36 +1,33 @@
-package io.github.mg138.bookshelf.item
+package io.github.mg138.bookshelf.entity
 
+import io.github.mg138.bookshelf.item.BookStatedItem
 import io.github.mg138.bookshelf.stat.Stated
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.bookshelf.stat.type.event.AfterDamageListener
 import io.github.mg138.bookshelf.stat.type.event.OnDamageListener
 import io.github.mg138.bookshelf.stat.utils.StatMap
+import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
-import net.minecraft.item.Item
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.world.World
 
-
-abstract class BookStatedItem(
-    id: Identifier,
-    bookItemSettings: BookItemSettings,
-    settings: Settings, vanillaItem: Item,
+abstract class BookStatedEntity<T: BookStatedEntity<T>>(
+    type: EntityType<T>, world: World,
     private val statMap: StatMap
-) : BookItem(id, bookItemSettings, settings, vanillaItem), Stated {
+) : BookEntity<T>(type, world), Stated {
     override fun getStatResult(type: StatType) = statMap.getStatResult(type)
     override fun getStat(type: StatType) = statMap.getStat(type)
     override fun stats() = statMap.stats()
     override fun types() = statMap.types()
     override fun iterator() = statMap.iterator()
 
-    fun onAttackEntity(
+    fun onBeingAttacked(
+        item: BookStatedItem,
         damager: LivingEntity,
         world: World,
         hand: Hand,
-        damagee: LivingEntity,
         hitResult: EntityHitResult?
     ): ActionResult {
         val sortedMap = statMap
@@ -40,7 +37,7 @@ abstract class BookStatedItem(
 
         for ((type, stat) in sortedMap) {
             val result = type.onDamage(
-                OnDamageListener.OnDamageEvent(stat, this, damager, damagee, world, hand, hitResult)
+                OnDamageListener.OnDamageEvent(stat, item, damager, this, world, hand, hitResult)
             )
 
             if (result != ActionResult.PASS) break
@@ -49,9 +46,9 @@ abstract class BookStatedItem(
         return ActionResult.PASS
     }
 
-    fun afterAttackEntity(
+    fun afterBeingAttacked(
         damager: LivingEntity,
-        damagee: LivingEntity
+        item: BookStatedItem
     ): ActionResult {
         val sortedMap = statMap
             .filterType<AfterDamageListener>()
@@ -60,7 +57,7 @@ abstract class BookStatedItem(
 
         for ((type, stat) in sortedMap) {
             val result = type.afterDamage(
-                AfterDamageListener.AfterDamageEvent(stat, this, damager, damagee)
+                AfterDamageListener.AfterDamageEvent(stat, item, damager, this)
             )
 
             if (result != ActionResult.PASS) break

@@ -12,6 +12,8 @@ import io.github.mg138.bookshelf.utils.minus
 import net.minecraft.entity.EntityGroup
 import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.particle.ParticleTypes
+import net.minecraft.server.world.ServerWorld
 import net.minecraft.text.TextColor
 import net.minecraft.util.ActionResult
 import java.lang.Double.min
@@ -156,15 +158,22 @@ object Preset {
         class PowerCritical : PowerType(Main.modId - "power_critical") {
             fun onDamage(event: OnDamageListener.OnDamageEvent): ActionResult {
                 val damagee = event.damagee
+                val p = event.stat.result()
 
                 DamageManager[damagee]?.forEach { (type, other) ->
                     if (type is DamageType) {
-                        DamageManager.queueDamage(damagee, type, other * event.stat.result())
+                        DamageManager.queueDamage(damagee, type, other * p)
                     }
+                }
+                (event.world as? ServerWorld)?.let {
+                    val pos = damagee.pos
+                    val count = (15 * p).toInt()
+                    it.spawnParticles(ParticleTypes.CRIT, pos.x, damagee.eyeY - 2.0, pos.z, count, 0.0, 1.0, 0.0, 0.5)
                 }
                 return ActionResult.PASS
             }
         }
+
         val POWER_CRITICAL = PowerCritical()
 
         class PowerDrain : PowerType(Main.modId - "power_drain") {
@@ -176,13 +185,14 @@ object Preset {
                 val mostRecentDamage = damagee.damageTracker.mostRecentDamage ?: return ActionResult.PASS
                 if (damager != mostRecentDamage.damageSource.source) return ActionResult.PASS
 
-                val healAmount = mostRecentDamage.damage
+                val healAmount = mostRecentDamage.damage * event.stat.result()
 
-                min(maxHealth, (damager.health + healAmount).toDouble())
+                min(maxHealth, (damager.health + healAmount))
 
                 return ActionResult.PASS
             }
         }
+
         val POWER_DRAIN = PowerDrain()
 
 
@@ -211,7 +221,7 @@ object Preset {
                     val power = event.item.getStat(PowerTypes.POWER_CRITICAL) ?: return ActionResult.PASS
                     val p = calculate(event.stat, power)
 
-                    return PowerTypes.POWER_CRITICAL.onDamage(event.copy(stat=p))
+                    return PowerTypes.POWER_CRITICAL.onDamage(event.copy(stat = p))
                 }
             }
 
@@ -223,7 +233,7 @@ object Preset {
                     val power = event.item.getStat(PowerTypes.POWER_DRAIN) ?: return ActionResult.PASS
                     val p = calculate(event.stat, power)
 
-                    return PowerTypes.POWER_DRAIN.afterDamage(event.copy(stat=p))
+                    return PowerTypes.POWER_DRAIN.afterDamage(event.copy(stat = p))
                 }
             }
 

@@ -16,7 +16,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.TypedActionResult
 import net.minecraft.world.World
 
-class FabricItem : BookStatedItem(
+class FabricItem private constructor() : BookStatedItem(
     Main.modId - "fabric_item",
     BookItemSettings(true),
     FabricItemSettings(), Items.PAPER,
@@ -26,6 +26,14 @@ class FabricItem : BookStatedItem(
         putStat(Preset.PowerTypes.POWER_CRITICAL, StatSingle(2.0))
     }
 ) {
+    companion object {
+        val FABRIC_ITEM = FabricItem()
+
+        fun register() {
+            FABRIC_ITEM.register()
+        }
+    }
+
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
         user.sendMessage(LiteralText("Hey!"), false)
 
