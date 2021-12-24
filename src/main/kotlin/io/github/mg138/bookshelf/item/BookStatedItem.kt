@@ -1,12 +1,12 @@
 package io.github.mg138.bookshelf.item
 
 import io.github.mg138.bookshelf.damage.DamageManager
-import io.github.mg138.bookshelf.stat.utils.StatMap
 import io.github.mg138.bookshelf.stat.Stated
 import io.github.mg138.bookshelf.stat.type.StatType
-import net.minecraft.entity.Entity
+import io.github.mg138.bookshelf.stat.type.event.AfterDamageListener
+import io.github.mg138.bookshelf.stat.type.event.OnDamageListener
+import io.github.mg138.bookshelf.stat.utils.StatMap
 import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
@@ -27,29 +27,46 @@ abstract class BookStatedItem(
     override fun types() = statMap.types()
     override fun iterator() = statMap.iterator()
 
-    fun onPlayerAttackEntity(
-        player: PlayerEntity,
+    fun onAttackEntity(
+        damager: LivingEntity,
         world: World,
         hand: Hand,
-        entity: Entity,
+        damagee: LivingEntity,
         hitResult: EntityHitResult?
     ): ActionResult {
-        if (entity !is LivingEntity) return ActionResult.FAIL
-
         val sortedMap = statMap
-            //.filter { (type, _) -> type.damagePriority != null }
-            .sortedBy { (type, _) -> type.damagePriority }
+            .filterType<OnDamageListener>()
+            .toSortedMap { type, _ -> type.onDamagePriority }
+            .onEach { (type, _) -> println((type as StatType).id) }
 
         for ((type, stat) in sortedMap) {
-            val result = type.onDamage(stat, this, player, world, hand, entity, hitResult) ?: continue
+            val result = type.onDamage(
+                OnDamageListener.OnDamageEvent(stat, this, damager, damagee, world, hand, hitResult)
+            )
 
-            if (result.actionResult != ActionResult.PASS) break
-
-            result.damageResult?.let {
-                DamageManager.queueDamage(entity, it)
-            }
+            if (result != ActionResult.PASS) break
         }
-        DamageManager.resolveDamage(entity, player)
+        DamageManager.resolveDamage(damagee, damager)
+
+        return ActionResult.PASS
+    }
+
+    fun afterAttackEntity(
+        damager: LivingEntity,
+        damagee: LivingEntity
+    ): ActionResult {
+        val sortedMap = statMap
+            .filterType<AfterDamageListener>()
+            .toSortedMap { type, _ -> type.afterDamagePriority }
+            .onEach { (type, _) -> println((type as StatType).id) }
+
+        for ((type, stat) in sortedMap) {
+            val result = type.afterDamage(
+                AfterDamageListener.AfterDamageEvent(stat, this, damager, damagee)
+            )
+
+            if (result != ActionResult.PASS) break
+        }
 
         return ActionResult.PASS
     }

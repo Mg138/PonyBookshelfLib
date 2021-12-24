@@ -1,25 +1,30 @@
 package io.github.mg138.bookshelf.stat.type.template
 
-import io.github.mg138.bookshelf.stat.type.StatType
+import io.github.mg138.bookshelf.damage.DamageManager
+import io.github.mg138.bookshelf.stat.type.event.OnDamageListener
+import io.github.mg138.bookshelf.stat.utils.StatUtil
+import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 
-//abstract class ModifierType(id: Identifier) :
-//    StatType(id) {
-//    override val damagePriority = 1
-//
-//    abstract class ModifierTypeTemplate(
-//        id: Identifier
-//    ) : ModifierType(id) {
-//        abstract fun condition(it: Double, event: BookDamageEvent): Boolean
-//
-//        override fun onDamage(it: Double, event: BookDamageEvent) {
-//            if (condition(it, event)) {
-//                event.damagerStat.map { (type, stat) ->
-//                    if (type is DamageType) {
-//                        stat * (it / 100)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
+abstract class ModifierType(id: Identifier) :
+    PercentageStatType(id), OnDamageListener {
+    override val onDamagePriority = 1
+
+    abstract class ModifierTypeTemplate(
+        id: Identifier
+    ) : ModifierType(id) {
+        abstract fun condition(event: OnDamageListener.OnDamageEvent): Boolean
+
+        override fun onDamage(event: OnDamageListener.OnDamageEvent): ActionResult {
+            if (condition(event)) {
+                val damagee = event.damagee
+                DamageManager[damagee]?.forEach { (type, other) ->
+                    if (type is DamageType) {
+                        DamageManager.queueDamage(damagee, type, StatUtil.damageModifier(other, event.stat))
+                    }
+                }
+            }
+            return ActionResult.PASS
+        }
+    }
+}

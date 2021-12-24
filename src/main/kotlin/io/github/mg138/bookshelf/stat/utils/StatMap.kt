@@ -5,18 +5,23 @@ import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.bookshelf.stat.type.StatTypeManager
 import net.minecraft.util.Identifier
-import java.lang.IllegalArgumentException
-import kotlin.collections.HashMap
 
-open class StatMap(private val map: MutableMap<StatType, Stat> = defaultMap()) : MutableStated {
+@Suppress("UNUSED")
+open class StatMap(
+    private val map: MutableMap<StatType, Stat> = defaultMap()
+) : MutableStated {
     companion object {
-        fun defaultMap(): MutableMap<StatType, Stat> = HashMap()
+        fun defaultMap(): MutableMap<StatType, Stat> = mutableMapOf()
     }
 
     constructor(stats: StatMap) : this(stats.map)
 
-    open fun toMap(): MutableMap<StatType, Stat> = HashMap<StatType, Stat>()
-        .also { it.putAll(this) }
+    fun filterKeys(predicate: (StatType) -> Boolean) = map.filterKeys(predicate).toMutableMap()
+
+    @Suppress("UNCHECKED_CAST")
+    inline fun <reified T> filterType() = filterKeys { it is T } as MutableMap<T, Stat>
+
+    open fun toMap() = defaultMap().also { it.putAll(this) }
 
     open fun computeIfPresent(type: StatType, action: (StatType, Stat) -> Stat) =
         this[type]?.let { old ->

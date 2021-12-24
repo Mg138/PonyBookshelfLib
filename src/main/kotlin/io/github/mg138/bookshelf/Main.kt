@@ -17,9 +17,9 @@ import org.apache.logging.log4j.Logger
 @Suppress("UNUSED")
 object Main : DedicatedServerModInitializer {
     const val modId = "pony_bookshelf"
-    val logger: Logger = LogManager.getLogger(modId)
+    private val logger: Logger = LogManager.getLogger(modId)
 
-    val serverItemConfig = ItemConfig.register()
+    private val serverItemConfig = ItemConfig.register()
 
     override fun onInitializeServer() {
         PolymerRPUtils.addAssetSource(modId)

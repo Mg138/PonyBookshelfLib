@@ -1,12 +1,18 @@
 package io.github.mg138.bookshelf.stat.stat
 
 interface Stat : Comparable<Stat> {
+    companion object {
+        val EMPTY = StatSingle(0.0)
+    }
+
     fun result(): Double
 
     fun incompatible(that: Stat) =
         "Incompatible Stat type. (${this::class.simpleName} verses ${that::class.simpleName})"
 
     fun ensureAtLeast(minimum: Double): Stat
+
+    fun round(): Stat
 
     operator fun plus(increment: Stat?): Stat
     operator fun minus(decrement: Stat?): Stat

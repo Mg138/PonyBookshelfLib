@@ -1,13 +1,22 @@
 package io.github.mg138.bookshelf.stat.type
 
 import io.github.mg138.bookshelf.Main
-import io.github.mg138.bookshelf.utils.minus
+import io.github.mg138.bookshelf.damage.DamageManager
 import io.github.mg138.bookshelf.stat.stat.Stat
-import io.github.mg138.bookshelf.stat.type.template.DamageType
-import io.github.mg138.bookshelf.stat.type.template.DefenseType
+import io.github.mg138.bookshelf.stat.type.event.AfterDamageListener
+import io.github.mg138.bookshelf.stat.type.event.OnDamageListener
+import io.github.mg138.bookshelf.stat.type.template.*
+import io.github.mg138.bookshelf.stat.utils.StatUtil
 import io.github.mg138.bookshelf.utils.ObjectUtil
+import io.github.mg138.bookshelf.utils.minus
+import net.minecraft.entity.EntityGroup
+import net.minecraft.entity.attribute.EntityAttributes
+import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.TextColor
+import net.minecraft.util.ActionResult
+import java.lang.Double.min
 
+@Suppress("UNUSED")
 object Preset {
     object DamageTypes {
         val DAMAGE_TRUE =
@@ -85,9 +94,8 @@ object Preset {
     object DefenseTypes {
         val DEFENSE_TRUE =
             object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_true", DamageTypes.DAMAGE_TRUE) {
-                override fun damageCalc(damage: Stat, stat: Stat): Stat {
-                    return damage - stat.result()
-                }
+                override fun act(damage: Stat, defense: Stat) =
+                    StatUtil.calculateTrueDamage(damage, defense)
             }
 
         val DEFENSE_PHYSICAL =
@@ -115,152 +123,119 @@ object Preset {
         val types = ObjectUtil.getFieldsOfObject<DefenseType, DefenseTypes>()
     }
 
-    //object ModifierTypes {
-    //    val MODIFIER_ARTHROPOD =
-    //        object : ModifierType.ModifierTypeTemplate("MODIFIER_ARTHROPOD") {
-    //            override fun condition(it: Double, event: BookDamageEvent) =
-    //                MobTypeUtil.isArthropod(event.damageEvent.entity.type)
-    //        }
-//
-    //    val MODIFIER_UNDEAD =
-    //        object : ModifierType.ModifierTypeTemplate("MODIFIER_UNDEAD") {
-    //            override fun condition(it: Double, event: BookDamageEvent) =
-    //                MobTypeUtil.isUndead(event.damageEvent.entity.type)
-    //        }
-//
-    //    val MODIFIER_MOBS =
-    //        object : ModifierType.ModifierTypeTemplate("MODIFIER_MOBS") {
-    //            override fun condition(it: Double, event: BookDamageEvent) =
-    //                MobTypeUtil.isMob(event.damageEvent.entity.type)
-    //        }
-//
-    //    val MODIFIER_HELL =
-    //        object : ModifierType.ModifierTypeTemplate("MODIFIER_HELL") {
-    //            override fun condition(it: Double, event: BookDamageEvent) =
-    //                MobTypeUtil.isHellish(event.damageEvent.entity.type)
-    //        }
-//
-    //    val MODIFIER_UNDERWATER =
-    //        object : ModifierType.ModifierTypeTemplate("MODIFIER_UNDERWATER") {
-    //            override fun condition(it: Double, event: BookDamageEvent) =
-    //                MobTypeUtil.isWatery(event.damageEvent.entity.type)
-    //        }
-//
-    //    val MODIFIER_PLAYER =
-    //        object : ModifierType.ModifierTypeTemplate("MODIFIER_PLAYER") {
-    //            override fun condition(it: Double, event: BookDamageEvent) =
-    //                event.damageEvent.entity is Player
-    //        }
-//
-//
-    //    val types = PresetUtil.getObjectPropertiesOfType<ModifierType, ModifierTypes>()
-    //}
-//
-    //object PowerTypes {
-    //    val POWER_CRITICAL =
-    //        object : PowerType("POWER_CRITICAL") {
-    //            override fun onDamage(power: Double, event: BookDamageEvent) {
-    //                event.damagerStat.map { (type, stat) ->
-    //                    if (type is DamageType) {
-    //                        stat * power
-    //                    }
-    //                }
-    //            }
-    //        }
-//
-    //    val POWER_DRAIN =
-    //        object : PowerType("POWER_DRAIN") {
-    //            override fun onDamage(power: Double, event: BookDamageEvent) {
-    //                val damageEvent = event.damageEvent as? EntityDamageByEntityEvent ?: return
-    //                val damager = damageEvent.damager as? LivingEntity ?: return
-    //                val maxHealth = damager.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue ?: return
-//
-    //                val healAmount = damageEvent.damage * power
-    //                damager.health = min(damager.health + healAmount, maxHealth)
-    //            }
-    //        }
-//
-    //    val POWER_SLOWNESS =
-    //        object : PowerType("POWER_SLOWNESS") {
-    //            override fun onDamage(power: Double, event: BookDamageEvent) {
-    //                val entity = event.damageEvent.entity as? LivingEntity ?: return
-//
-    //                val ticks = (power * 200).toLong()
-//
-    //                EffectManager.instance.apply(
-    //                    EffectType.Preset.SLOWNESS,
-    //                    entity,
-    //                    power,
-    //                    ticks
-    //                )
-    //            }
-//
-    //        }
-//
-    //    val POWER_NAUSEOUS =
-    //        object : PowerType("POWER_NAUSEOUS") {
-    //            override fun onDamage(power: Double, event: BookDamageEvent) {
-    //                val entity = event.damageEvent.entity as? LivingEntity ?: return
-//
-    //                val ticks = (20 * power).toLong()
-//
-    //                if (ticks >= 20) {
-    //                    EffectManager.instance.apply(
-    //                        EffectType.Preset.NAUSEOUS,
-    //                        entity,
-    //                        0.0,
-    //                        ticks
-    //                    )
-    //                }
-    //            }
-    //        }
-//
-    //    val POWER_LEVITATION =
-    //        object : PowerType("POWER_LEVITATION") {
-    //            override fun onDamage(power: Double, event: BookDamageEvent) {
-    //                val entity = event.damageEvent.entity as? LivingEntity ?: return
-//
-    //                val ticks = (20 * power).toLong()
-//
-    //                if (ticks >= 20) {
-    //                    EffectManager.instance.apply(
-    //                        EffectType.Preset.LEVITATION,
-    //                        entity,
-    //                        0.0,
-    //                        ticks
-    //                    )
-    //                }
-    //            }
-//
-    //        }
-//
-    //    val types = PresetUtil.getObjectPropertiesOfType<PowerType, PowerTypes>()
-    //}
-//
-    //object ChanceTypes {
-    //    val CHANCE_CRITICAL =
-    //        object : ChanceType.ChanceTypeTemplate("CHANCE_CRITICAL", PowerTypes.POWER_CRITICAL) {}
-//
-    //    val CHANCE_DRAIN =
-    //        object : ChanceType.ChanceTypeTemplate("CHANCE_DRAIN", PowerTypes.POWER_DRAIN) {}
-//
-    //    val CHANCE_SLOWNESS =
-    //        object : ChanceType.ChanceTypeTemplate("CHANCE_SLOWNESS", PowerTypes.POWER_SLOWNESS) {}
-//
-    //    val CHANCE_NAUSEOUS =
-    //        object : ChanceType.ChanceTypeTemplate("CHANCE_NAUSEOUS", PowerTypes.POWER_NAUSEOUS) {}
-//
-    //    val CHANCE_LEVITATION =
-    //        object : ChanceType.ChanceTypeTemplate("CHANCE_LEVITATION", PowerTypes.POWER_LEVITATION) {}
-//
-    //    val types = PresetUtil.getObjectPropertiesOfType<ChanceType, ChanceTypes>()
-    //}
+    object ModifierTypes {
+        val MODIFIER_ARTHROPOD =
+            object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_arthropod") {
+                override fun condition(event: OnDamageListener.OnDamageEvent) =
+                    event.damagee.group == EntityGroup.ARTHROPOD
+            }
 
-    val types = listOf(
-        *DamageTypes.types.toTypedArray(),
-        *DefenseTypes.types.toTypedArray(),
-        //*ModifierTypes.types.toTypedArray(),
-        //*PowerTypes.types.toTypedArray(),
-        //*ChanceTypes.types.toTypedArray()
-    )
+        val MODIFIER_UNDEAD =
+            object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_undead") {
+                override fun condition(event: OnDamageListener.OnDamageEvent) =
+                    event.damagee.group == EntityGroup.UNDEAD
+            }
+
+        val MODIFIER_UNDERWATER =
+            object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_underwater") {
+                override fun condition(event: OnDamageListener.OnDamageEvent) =
+                    event.damagee.group == EntityGroup.AQUATIC
+            }
+
+        val MODIFIER_PLAYER =
+            object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_player") {
+                override fun condition(event: OnDamageListener.OnDamageEvent) =
+                    event.damagee is PlayerEntity
+            }
+
+
+        val types = ObjectUtil.getFieldsOfObject<ModifierType, ModifierTypes>()
+    }
+
+    object PowerTypes {
+        class PowerCritical : PowerType(Main.modId - "power_critical") {
+            fun onDamage(event: OnDamageListener.OnDamageEvent): ActionResult {
+                val damagee = event.damagee
+
+                DamageManager[damagee]?.forEach { (type, other) ->
+                    if (type is DamageType) {
+                        DamageManager.queueDamage(damagee, type, other * event.stat.result())
+                    }
+                }
+                return ActionResult.PASS
+            }
+        }
+        val POWER_CRITICAL = PowerCritical()
+
+        class PowerDrain : PowerType(Main.modId - "power_drain") {
+            fun afterDamage(event: AfterDamageListener.AfterDamageEvent): ActionResult {
+                val damager = event.damager
+                val damagee = event.damagee
+
+                val maxHealth = damager.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH)
+                val mostRecentDamage = damagee.damageTracker.mostRecentDamage ?: return ActionResult.PASS
+                if (damager != mostRecentDamage.damageSource.source) return ActionResult.PASS
+
+                val healAmount = mostRecentDamage.damage
+
+                min(maxHealth, (damager.health + healAmount).toDouble())
+
+                return ActionResult.PASS
+            }
+        }
+        val POWER_DRAIN = PowerDrain()
+
+
+        //val POWER_SLOWNESS =
+        //    object : PowerType("power_slowness") {
+        //        override fun onDamage(power: Double, event: BookDamageEvent) {
+        //            val entity = event.damageEvent.entity as? LivingEntity ?: return
+        //            val ticks = (power * 200).toLong()
+        //            EffectManager.instance.apply(
+        //                EffectType.Preset.SLOWNESS,
+        //                entity,
+        //                power,
+        //                ticks
+        //            )
+        //        }
+        //    }
+        val types = ObjectUtil.getFieldsOfObject<PowerType, PowerTypes>()
+    }
+
+    object ChanceTypes {
+        val CHANCE_CRITICAL: ChanceType =
+            object : ChanceType(Main.modId - "chance_critical"), OnDamageListener {
+                override val onDamagePriority = 1000
+
+                override fun onDamage(event: OnDamageListener.OnDamageEvent): ActionResult {
+                    val power = event.item.getStat(PowerTypes.POWER_CRITICAL) ?: return ActionResult.PASS
+                    val p = calculate(event.stat, power)
+
+                    return PowerTypes.POWER_CRITICAL.onDamage(event.copy(stat=p))
+                }
+            }
+
+        val CHANCE_DRAIN: ChanceType =
+            object : ChanceType(Main.modId - "chance_drain"), AfterDamageListener {
+                override val afterDamagePriority = 1000
+
+                override fun afterDamage(event: AfterDamageListener.AfterDamageEvent): ActionResult {
+                    val power = event.item.getStat(PowerTypes.POWER_DRAIN) ?: return ActionResult.PASS
+                    val p = calculate(event.stat, power)
+
+                    return PowerTypes.POWER_DRAIN.afterDamage(event.copy(stat=p))
+                }
+            }
+
+        //val CHANCE_SLOWNESS =
+        //    object : ChanceType.ChanceTypeTemplate("chance_slowness", PowerTypes.POWER_SLOWNESS) {}
+
+        val types = ObjectUtil.getFieldsOfObject<ChanceType, ChanceTypes>()
+    }
+
+    val types = DamageTypes.types +
+            DefenseTypes.types +
+            ModifierTypes.types +
+            PowerTypes.types +
+            ChanceTypes.types
 }

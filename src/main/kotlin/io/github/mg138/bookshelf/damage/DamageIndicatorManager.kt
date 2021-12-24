@@ -1,12 +1,11 @@
 package io.github.mg138.bookshelf.damage
 
+import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.StatType
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.Entity
-import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.decoration.ArmorStandEntity
-import net.minecraft.entity.mob.ZombieEntity
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import java.util.*
@@ -26,7 +25,7 @@ object DamageIndicatorManager {
             isInvulnerable = true
             isCustomNameVisible = true
 
-            customName = type.indicator(damage.toInt())
+            customName = type.indicator(StatSingle(damage))
 
             setNoGravity(true)
         }

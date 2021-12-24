@@ -1,6 +1,7 @@
 package io.github.mg138.bookshelf.stat.stat
 
 import java.util.*
+import kotlin.math.roundToInt
 
 class StatRange(min: Double, max: Double) : Stat {
     val min: Double
@@ -18,6 +19,13 @@ class StatRange(min: Double, max: Double) : Stat {
             this.min = min
             this.max = max
         }
+    }
+
+    override fun round(): Stat {
+        return StatRange(
+            this.min.roundToInt().toDouble(),
+            this.max.roundToInt().toDouble()
+        )
     }
 
     private fun withPercentage(percentage: Double): Double {
@@ -130,5 +138,5 @@ class StatRange(min: Double, max: Double) : Stat {
 
     override fun hashCode() = 31 * min.hashCode() + max.hashCode()
 
-    override fun toString() = "StatRange($min, $max)"
+    override fun toString() = "$min, $max"
 }

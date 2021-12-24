@@ -16,9 +16,9 @@ object StatTypeCmd {
 
         StatTypeManager.registeredTypes.forEach { id ->
             source.sendFeedback(
-                id.name(0)
+                id.name()
                     .append(" (Indicator: ")
-                    .append(id.indicator(0))
+                    .append(id.indicator())
                     .append(") "),
                 false
             )

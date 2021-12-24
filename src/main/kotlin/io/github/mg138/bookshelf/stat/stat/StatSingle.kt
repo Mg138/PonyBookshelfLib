@@ -1,7 +1,13 @@
 package io.github.mg138.bookshelf.stat.stat
 
+import kotlin.math.roundToInt
+
 class StatSingle(private val stat: Double) : Stat {
     override fun result() = stat
+
+    override fun round(): Stat {
+        return StatSingle(this.stat.roundToInt().toDouble())
+    }
 
     override operator fun plus(increment: Stat?): StatSingle {
         if (increment == null) return this
@@ -85,5 +91,5 @@ class StatSingle(private val stat: Double) : Stat {
 
     override fun hashCode() = stat.hashCode()
 
-    override fun toString() = "StatSingle($stat)"
+    override fun toString() = "$stat"
 }

@@ -1,23 +1,17 @@
 package io.github.mg138.bookshelf.stat.type
 
-import io.github.mg138.bookshelf.result.UseOnEntityResult
-import io.github.mg138.bookshelf.item.BookStatedItem
+import com.google.common.math.IntMath.pow
 import io.github.mg138.bookshelf.stat.stat.Stat
-import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.text.LiteralText
-import net.minecraft.text.Style
+import net.minecraft.text.MutableText
 import net.minecraft.text.TextColor
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
-import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
-import net.minecraft.util.hit.EntityHitResult
-import net.minecraft.world.World
 
 
 abstract class StatType(
-    val id: Identifier,
+    val id: Identifier
 ) {
     var numberColor: TextColor = TextColor.fromFormatting(Formatting.WHITE)!!
 
@@ -42,30 +36,26 @@ abstract class StatType(
 
     // Translate
 
-    private fun damageWithColor(damage: Int) = LiteralText(damage.toString())
-        .styled { it.withColor(numberColor) }
+    protected fun round(value: Stat, digitsAfterDecimal: Int): Stat {
+        val m = pow(10, digitsAfterDecimal)
+
+        return (value * m).round() / m
+    }
+
+    protected open fun valueToString(value: Stat, digitsAfterDecimal: Int) =
+        round(value, digitsAfterDecimal).toString()
+
+    protected open fun valueWithColor(value: Stat, digitsAfterDecimal: Int = 1): MutableText =
+        LiteralText(valueToString(value, digitsAfterDecimal))
+            .styled { it.withColor(numberColor) }
 
     val translationKey = "pony_bookshelf.stat_type.${id.namespace}.${id.path}"
-    fun name(damage: Int) = TranslatableText(
-        translationKey, damageWithColor(damage)
+    open fun name(stat: Stat = Stat.EMPTY) = TranslatableText(
+        translationKey, valueWithColor(stat)
     )
 
     val indicatorTranslationKey = "$translationKey.indicator"
-    fun indicator(damage: Int) = TranslatableText(
-        indicatorTranslationKey, damageWithColor(damage)
+    open fun indicator(stat: Stat = Stat.EMPTY) = TranslatableText(
+        indicatorTranslationKey, valueWithColor(stat)
     )
-
-    // Event
-
-    open fun onDamage(
-        stat: Stat,
-        statedItem: BookStatedItem,
-        player: PlayerEntity,
-        world: World,
-        hand: Hand,
-        entity: LivingEntity,
-        hitResult: EntityHitResult?
-    ): UseOnEntityResult? = null
-
-    open val damagePriority: Int? = null
 }

@@ -4,7 +4,6 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.suggestion.SuggestionProvider
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.item.ServerItemManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.util.Identifier
@@ -13,7 +12,7 @@ import java.util.concurrent.CompletableFuture
 object ItemIdSuggestion : SuggestionProvider<ServerCommandSource> {
     const val id = "item_id"
 
-    val ids
+    private val ids
         get() = ServerItemManager.ids.map { it.toString() }
 
     override fun getSuggestions(

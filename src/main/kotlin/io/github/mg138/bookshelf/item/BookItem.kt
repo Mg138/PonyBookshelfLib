@@ -14,7 +14,7 @@ abstract class BookItem(
     bookItemSettings: BookItemSettings,
     settings: Settings, vanillaItem: Item
 ) : SimplePolymerItem(settings, vanillaItem) {
-    val customModelData = if (bookItemSettings.customTexture) {
+    private val customModelData = if (bookItemSettings.customTexture) {
         PolymerRPUtils.requestModel(vanillaItem, id.namespace - "item/${id.path}").value
     } else -1
 

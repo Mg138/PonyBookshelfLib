@@ -30,5 +30,38 @@
     "pony_bookshelf.stat_type.pony_bookshelf.damage_none.indicator": "<ICON> %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder": "<ICON> Thunder Damage: %s",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder.indicator": "<ICON> %s"
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder.indicator": "<ICON> %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_tempus": " Tempest Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_tempus.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_aqua": " Water Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_aqua.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_ignis": " Flame Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_ignis.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_physical": " Physical Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_physical.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_true": " True Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_true.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_bleed": " Bleeding Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_bleed.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_terra": " Earth Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_terra.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_umbra": " Dark Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_umbra.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_lumen": " Light Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_lumen.indicator": " %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_none": "<ICON> Unknown Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_none.indicator": "<ICON> %s",
+
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_thunder": "<ICON> Thunder Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_thunder.indicator": "<ICON> %s"
 }

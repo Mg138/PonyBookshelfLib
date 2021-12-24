@@ -3,10 +3,10 @@ package io.github.mg138.bookshelf.item.test
 import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.item.BookItemSettings
 import io.github.mg138.bookshelf.item.BookStatedItem
-import io.github.mg138.bookshelf.utils.minus
-import io.github.mg138.bookshelf.stat.utils.StatMap
-import io.github.mg138.bookshelf.stat.stat.StatRange
+import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.Preset
+import io.github.mg138.bookshelf.stat.utils.StatMap
+import io.github.mg138.bookshelf.utils.minus
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
@@ -21,13 +21,9 @@ class FabricItem : BookStatedItem(
     BookItemSettings(true),
     FabricItemSettings(), Items.PAPER,
     StatMap().apply {
-        putStat(Preset.DamageTypes.DAMAGE_AQUA, StatRange(10000.0, 100000.0))
-        putStat(Preset.DamageTypes.DAMAGE_TRUE, StatRange(10000.0, 100000.0))
-        putStat(Preset.DamageTypes.DAMAGE_IGNIS, StatRange(10000.0, 100000.0))
-        putStat(Preset.DamageTypes.DAMAGE_PHYSICAL, StatRange(10000.0, 100000.0))
-        putStat(Preset.DamageTypes.DAMAGE_TEMPUS, StatRange(10000.0, 100000.0))
-        putStat(Preset.DamageTypes.DAMAGE_THUNDER, StatRange(10000.0, 100000.0))
-        putStat(Preset.DamageTypes.DAMAGE_TERRA, StatRange(10000.0, 100000.0))
+        putStat(Preset.DamageTypes.DAMAGE_AQUA, StatSingle(10000.0))
+        putStat(Preset.ChanceTypes.CHANCE_CRITICAL, StatSingle(2.0))
+        putStat(Preset.PowerTypes.POWER_CRITICAL, StatSingle(2.0))
     }
 ) {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
