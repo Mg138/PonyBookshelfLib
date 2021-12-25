@@ -1,9 +1,9 @@
 package io.github.mg138.bookshelf.item
 
+import io.github.mg138.bookshelf.damage.DamageEvent
 import io.github.mg138.bookshelf.stat.Stated
+import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.type.StatType
-import io.github.mg138.bookshelf.stat.type.event.AfterDamageListener
-import io.github.mg138.bookshelf.stat.type.event.OnDamageListener
 import io.github.mg138.bookshelf.stat.utils.StatMap
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.Item
@@ -34,13 +34,13 @@ abstract class BookStatedItem(
         hitResult: EntityHitResult?
     ): ActionResult {
         val sortedMap = statMap
-            .filterType<OnDamageListener>()
+            .filterType<StatEvent.OnDamageCallback>()
             .toSortedMap { type, _ -> type.onDamagePriority }
             .onEach { (type, _) -> println((type as StatType).id) }
 
         for ((type, stat) in sortedMap) {
             val result = type.onDamage(
-                OnDamageListener.OnDamageEvent(stat, this, damager, damagee, world, hand, hitResult)
+                StatEvent.OnDamageCallback.OnDamageEvent(stat, this, damager, damagee, world, hand, hitResult)
             )
 
             if (result != ActionResult.PASS) break
@@ -54,13 +54,13 @@ abstract class BookStatedItem(
         damagee: LivingEntity
     ): ActionResult {
         val sortedMap = statMap
-            .filterType<AfterDamageListener>()
+            .filterType<StatEvent.AfterDamageCallback>()
             .toSortedMap { type, _ -> type.afterDamagePriority }
             .onEach { (type, _) -> println((type as StatType).id) }
 
         for ((type, stat) in sortedMap) {
             val result = type.afterDamage(
-                AfterDamageListener.AfterDamageEvent(stat, this, damager, damagee)
+                StatEvent.AfterDamageCallback.AfterDamageEvent(stat, this, damager, damagee)
             )
 
             if (result != ActionResult.PASS) break

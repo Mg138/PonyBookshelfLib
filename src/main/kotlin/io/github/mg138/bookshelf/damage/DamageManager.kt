@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
-import net.minecraft.entity.damage.EntityDamageSource
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
@@ -30,16 +29,20 @@ object DamageManager {
         }
     }
 
-    fun resolveDamage(damagee: LivingEntity, damager: Entity? = null, source: DamageSource = DamageSource.GENERIC) {
+    fun resolveDamage(
+        damagee: LivingEntity,
+        item: BookStatedItem? = null,
+        damager: LivingEntity? = null,
+        source: DamageSource = DamageSource.GENERIC
+    ) {
         map[damagee]?.onEach { (type, stat) ->
             val damage = stat.result()
-
             damagee.damage(source, damage.toFloat())
-            DamageIndicatorManager.displayDamage(damage, type, damagee)
 
-            if (damager is LivingEntity) {
-                val item = damager.mainHandStack.item
-                if (item is BookStatedItem) {
+            if (damager != null) {
+                DamageIndicatorManager.displayDamage(damage, type, damagee)
+
+                if (item != null) {
                     item.afterAttackEntity(damager, damagee)
 
                     if (damagee is BookStatedEntity<*>) {
@@ -47,6 +50,10 @@ object DamageManager {
                     }
                 }
             }
+        }?.also { map ->
+            DamageEvent.AFTER_BOOK_DAMAGE.invoker().afterDamage(
+                DamageEvent.AfterBookDamageCallback.AfterBookDamageEvent(map, item, damager, damagee)
+            )
         }?.clear()
 
         map.remove(damagee)
@@ -72,7 +79,10 @@ object DamageManager {
             damagee.onBeingAttacked(item, damager, world, hand, hitResult)
         }
 
-        resolveDamage(damagee, damager, DamageSource.player(damager))
+        DamageEvent.ON_BOOK_DAMAGE.invoker().onDamage(
+            DamageEvent.OnBookDamageCallback.OnBookDamageEvent(item, damager, damagee, world, hand, hitResult)
+        )
+        resolveDamage(damagee, item, damager, DamageSource.player(damager))
 
         return result
     }

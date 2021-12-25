@@ -2,9 +2,8 @@ package io.github.mg138.bookshelf.stat.type
 
 import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.damage.DamageManager
+import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
-import io.github.mg138.bookshelf.stat.type.event.AfterDamageListener
-import io.github.mg138.bookshelf.stat.type.event.OnDamageListener
 import io.github.mg138.bookshelf.stat.type.template.*
 import io.github.mg138.bookshelf.stat.utils.StatUtil
 import io.github.mg138.bookshelf.utils.EntityUtil.getDisplayPos
@@ -138,25 +137,25 @@ object Preset {
     object ModifierTypes {
         val MODIFIER_ARTHROPOD =
             object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_arthropod") {
-                override fun condition(event: OnDamageListener.OnDamageEvent) =
+                override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
                     event.damagee.group == EntityGroup.ARTHROPOD
             }
 
         val MODIFIER_UNDEAD =
             object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_undead") {
-                override fun condition(event: OnDamageListener.OnDamageEvent) =
+                override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
                     event.damagee.group == EntityGroup.UNDEAD
             }
 
         val MODIFIER_UNDERWATER =
             object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_underwater") {
-                override fun condition(event: OnDamageListener.OnDamageEvent) =
+                override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
                     event.damagee.group == EntityGroup.AQUATIC
             }
 
         val MODIFIER_PLAYER =
             object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_player") {
-                override fun condition(event: OnDamageListener.OnDamageEvent) =
+                override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
                     event.damagee is PlayerEntity
             }
 
@@ -166,7 +165,7 @@ object Preset {
 
     object PowerTypes {
         class PowerCritical : PowerType(Main.modId - "power_critical") {
-            fun onDamage(event: OnDamageListener.OnDamageEvent): ActionResult {
+            fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
                 val damagee = event.damagee
                 val p = event.stat.result()
 
@@ -189,7 +188,7 @@ object Preset {
         val POWER_CRITICAL = PowerCritical()
 
         class PowerDrain : PowerType(Main.modId - "power_drain") {
-            fun afterDamage(event: AfterDamageListener.AfterDamageEvent): ActionResult {
+            fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
                 val damager = event.damager
                 val damagee = event.damagee
 
@@ -210,8 +209,8 @@ object Preset {
 
         //val POWER_SLOWNESS =
         //    object : PowerType("power_slowness") {
-        //        override fun onDamage(power: Double, event: BookDamageEvent) {
-        //            val entity = event.damageEvent.entity as? LivingEntity ?: return
+        //        override fun onDamage(power: Double, event: BookStatEvent) {
+        //            val entity = event.StatEvent.entity as? LivingEntity ?: return
         //            val ticks = (power * 200).toLong()
         //            EffectManager.instance.apply(
         //                EffectType.Preset.SLOWNESS,
@@ -226,10 +225,10 @@ object Preset {
 
     object ChanceTypes {
         val CHANCE_CRITICAL: ChanceType =
-            object : ChanceType(Main.modId - "chance_critical"), OnDamageListener {
+            object : ChanceType(Main.modId - "chance_critical"), StatEvent.OnDamageCallback {
                 override val onDamagePriority = 1000
 
-                override fun onDamage(event: OnDamageListener.OnDamageEvent): ActionResult {
+                override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
                     val power = event.item.getStat(PowerTypes.POWER_CRITICAL) ?: return ActionResult.PASS
                     val p = calculate(event.stat, power)
 
@@ -238,10 +237,10 @@ object Preset {
             }
 
         val CHANCE_DRAIN: ChanceType =
-            object : ChanceType(Main.modId - "chance_drain"), AfterDamageListener {
+            object : ChanceType(Main.modId - "chance_drain"), StatEvent.AfterDamageCallback {
                 override val afterDamagePriority = 1000
 
-                override fun afterDamage(event: AfterDamageListener.AfterDamageEvent): ActionResult {
+                override fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
                     val power = event.item.getStat(PowerTypes.POWER_DRAIN) ?: return ActionResult.PASS
                     val p = calculate(event.stat, power)
 
