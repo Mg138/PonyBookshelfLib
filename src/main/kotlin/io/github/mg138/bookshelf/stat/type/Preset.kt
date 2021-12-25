@@ -192,10 +192,10 @@ object Preset {
                 val damager = event.damager
                 val damagee = event.damagee
 
-                val maxHealth = damager.getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH)
                 val mostRecentDamage = damagee.damageTracker.mostRecentDamage ?: return ActionResult.PASS
                 if (damager != mostRecentDamage.damageSource.source) return ActionResult.PASS
 
+                val maxHealth = damager.maxHealth.toDouble()
                 val healAmount = mostRecentDamage.damage * event.stat.result()
 
                 min(maxHealth, (damager.health + healAmount))
