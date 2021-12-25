@@ -1,10 +1,10 @@
 package io.github.mg138.bookshelf.item
 
-import io.github.mg138.bookshelf.damage.DamageEvent
 import io.github.mg138.bookshelf.stat.Stated
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.type.StatType
-import io.github.mg138.bookshelf.stat.utils.StatMap
+import io.github.mg138.bookshelf.stat.StatMap
+import io.github.mg138.bookshelf.utils.StatUtil.filterAndSort
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.Item
 import net.minecraft.util.ActionResult
@@ -33,10 +33,7 @@ abstract class BookStatedItem(
         damagee: LivingEntity,
         hitResult: EntityHitResult?
     ): ActionResult {
-        val sortedMap = statMap
-            .filterType<StatEvent.OnDamageCallback>()
-            .toSortedMap { type, _ -> type.onDamagePriority }
-            .onEach { (type, _) -> println((type as StatType).id) }
+        val sortedMap = statMap.filterAndSort<StatEvent.OnDamageCallback> { it.onDamagePriority }
 
         for ((type, stat) in sortedMap) {
             val result = type.onDamage(
@@ -53,10 +50,7 @@ abstract class BookStatedItem(
         damager: LivingEntity,
         damagee: LivingEntity
     ): ActionResult {
-        val sortedMap = statMap
-            .filterType<StatEvent.AfterDamageCallback>()
-            .toSortedMap { type, _ -> type.afterDamagePriority }
-            .onEach { (type, _) -> println((type as StatType).id) }
+        val sortedMap = statMap.filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
 
         for ((type, stat) in sortedMap) {
             val result = type.afterDamage(

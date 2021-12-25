@@ -1,11 +1,11 @@
 package io.github.mg138.bookshelf.entity
 
-import io.github.mg138.bookshelf.damage.DamageEvent
 import io.github.mg138.bookshelf.item.BookStatedItem
 import io.github.mg138.bookshelf.stat.Stated
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.type.StatType
-import io.github.mg138.bookshelf.stat.utils.StatMap
+import io.github.mg138.bookshelf.stat.StatMap
+import io.github.mg138.bookshelf.utils.StatUtil.filterAndSort
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.util.ActionResult
@@ -13,7 +13,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.world.World
 
-abstract class BookStatedEntity<T: BookStatedEntity<T>>(
+abstract class BookStatedEntity<T : BookStatedEntity<T>>(
     type: EntityType<T>, world: World,
     private val statMap: StatMap
 ) : BookEntity<T>(type, world), Stated {
@@ -30,10 +30,7 @@ abstract class BookStatedEntity<T: BookStatedEntity<T>>(
         hand: Hand,
         hitResult: EntityHitResult?
     ): ActionResult {
-        val sortedMap = statMap
-            .filterType<StatEvent.OnDamageCallback>()
-            .toSortedMap { type, _ -> type.onDamagePriority }
-            .onEach { (type, _) -> println((type as StatType).id) }
+        val sortedMap = statMap.filterAndSort<StatEvent.OnDamageCallback> { it.onDamagePriority }
 
         for ((type, stat) in sortedMap) {
             val result = type.onDamage(
@@ -50,10 +47,7 @@ abstract class BookStatedEntity<T: BookStatedEntity<T>>(
         damager: LivingEntity,
         item: BookStatedItem
     ): ActionResult {
-        val sortedMap = statMap
-            .filterType<StatEvent.AfterDamageCallback>()
-            .toSortedMap { type, _ -> type.afterDamagePriority }
-            .onEach { (type, _) -> println((type as StatType).id) }
+        val sortedMap = statMap.filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
 
         for ((type, stat) in sortedMap) {
             val result = type.afterDamage(

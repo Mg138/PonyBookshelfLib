@@ -4,7 +4,7 @@ import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.entity.BookStatedEntity
 import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.Preset
-import io.github.mg138.bookshelf.stat.utils.StatMap
+import io.github.mg138.bookshelf.stat.StatMap
 import io.github.mg138.bookshelf.utils.minus
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder

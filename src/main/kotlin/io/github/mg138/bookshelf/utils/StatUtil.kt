@@ -1,9 +1,18 @@
-package io.github.mg138.bookshelf.stat.utils
+package io.github.mg138.bookshelf.utils
 
+import io.github.mg138.bookshelf.stat.StatMap
+import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
+import io.github.mg138.bookshelf.stat.type.StatType
 import kotlin.math.max
 
 object StatUtil {
+    inline fun <reified T> StatMap.filterAndSort(crossinline sortBy: (T) -> Int) =
+        this.filterType<T>()
+            .asIterable()
+            .sortedBy { (type, _) -> sortBy(type) }
+            .onEach { (type, _) -> println((type as StatType).id) }
+
     private fun percent(m: Double, k: Int) = max(m / (m + k), 0.0)
 
     private fun positivePercent(m: Double, k: Int) = 1 + percent(m, k)

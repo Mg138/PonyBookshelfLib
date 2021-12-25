@@ -5,13 +5,12 @@ import io.github.mg138.bookshelf.damage.DamageManager
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.template.*
-import io.github.mg138.bookshelf.stat.utils.StatUtil
+import io.github.mg138.bookshelf.utils.StatUtil
 import io.github.mg138.bookshelf.utils.EntityUtil.getDisplayPos
 import io.github.mg138.bookshelf.utils.ObjectUtil
 import io.github.mg138.bookshelf.utils.ParticleUtil.spawnParticles
 import io.github.mg138.bookshelf.utils.minus
 import net.minecraft.entity.EntityGroup
-import net.minecraft.entity.attribute.EntityAttributes
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.text.TextColor
@@ -176,7 +175,7 @@ object Preset {
                 }
 
                 val pos = damagee.getDisplayPos()
-                val dPos = Vec3d(0.0, 1.0, 0.0)
+                val dPos = Vec3d(0.0, 0.0, 0.0)
                 val count = (15 * p).toInt()
 
                 damagee.spawnParticles(ParticleTypes.CRIT, pos, count, dPos, 0.5)

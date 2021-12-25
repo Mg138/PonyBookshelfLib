@@ -5,7 +5,7 @@ import io.github.mg138.bookshelf.item.BookItemSettings
 import io.github.mg138.bookshelf.item.BookStatedItem
 import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.Preset
-import io.github.mg138.bookshelf.stat.utils.StatMap
+import io.github.mg138.bookshelf.stat.StatMap
 import io.github.mg138.bookshelf.utils.minus
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.minecraft.entity.player.PlayerEntity
@@ -22,6 +22,9 @@ class FabricItem private constructor() : BookStatedItem(
     FabricItemSettings(), Items.PAPER,
     StatMap().apply {
         putStat(Preset.DamageTypes.DAMAGE_AQUA, StatSingle(10000.0))
+        putStat(Preset.DamageTypes.DAMAGE_IGNIS, StatSingle(10000.0))
+        putStat(Preset.DamageTypes.DAMAGE_TERRA, StatSingle(10000.0))
+        putStat(Preset.DamageTypes.DAMAGE_TEMPUS, StatSingle(10000.0))
         putStat(Preset.ChanceTypes.CHANCE_CRITICAL, StatSingle(2.0))
         putStat(Preset.PowerTypes.POWER_CRITICAL, StatSingle(2.0))
     }
@@ -35,7 +38,7 @@ class FabricItem private constructor() : BookStatedItem(
     }
 
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
-        user.sendMessage(LiteralText("Hey!"), false)
+        user.sendMessage(LiteralText("uwu"), false)
 
         return super.use(world, user, hand)
     }

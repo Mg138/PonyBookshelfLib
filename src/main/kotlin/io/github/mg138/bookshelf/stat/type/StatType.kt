@@ -49,12 +49,16 @@ abstract class StatType(
             .styled { it.withColor(numberColor) }
 
     val translationKey = "pony_bookshelf.stat_type.${id.namespace}.${id.path}"
+    val iconKey = "$translationKey.icon"
+    val indicatorTranslationKey = "$translationKey.indicator"
+
+    open val icon = TranslatableText(iconKey)
+
     open fun name(stat: Stat = Stat.EMPTY) = TranslatableText(
-        translationKey, valueWithColor(stat)
+        translationKey, icon, valueWithColor(stat)
     )
 
-    val indicatorTranslationKey = "$translationKey.indicator"
     open fun indicator(stat: Stat = Stat.EMPTY) = TranslatableText(
-        indicatorTranslationKey, valueWithColor(stat)
+        indicatorTranslationKey, icon, valueWithColor(stat)
     )
 }

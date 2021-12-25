@@ -1,11 +1,10 @@
 package io.github.mg138.bookshelf.stat.type.template
 
-import io.github.mg138.bookshelf.damage.DamageEvent
 import io.github.mg138.bookshelf.damage.DamageManager
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
-import io.github.mg138.bookshelf.stat.utils.StatUtil
+import io.github.mg138.bookshelf.utils.StatUtil
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 

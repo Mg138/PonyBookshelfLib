@@ -35,9 +35,12 @@ object DamageManager {
         damager: LivingEntity? = null,
         source: DamageSource = DamageSource.GENERIC
     ) {
+        val damages: MutableMap<StatType, Double> = mutableMapOf()
+
         map[damagee]?.onEach { (type, stat) ->
             val damage = stat.result()
             damagee.damage(source, damage.toFloat())
+            damages[type] = damage
 
             if (damager != null) {
                 DamageIndicatorManager.displayDamage(damage, type, damagee)
@@ -50,11 +53,11 @@ object DamageManager {
                     }
                 }
             }
-        }?.also { map ->
-            DamageEvent.AFTER_BOOK_DAMAGE.invoker().afterDamage(
-                DamageEvent.AfterBookDamageCallback.AfterBookDamageEvent(map, item, damager, damagee)
-            )
         }?.clear()
+
+        DamageEvent.AFTER_BOOK_DAMAGE.invoker().afterDamage(
+            DamageEvent.AfterBookDamageCallback.AfterBookDamageEvent(damages, item, damager, damagee)
+        )
 
         map.remove(damagee)
     }

@@ -41,7 +41,7 @@ object DamageEvent {
 
     fun interface AfterBookDamageCallback {
         data class AfterBookDamageEvent(
-            val damages: Map<StatType, Stat>,
+            val damages: Map<StatType, Double>,
             val item: BookStatedItem?,
             val damager: LivingEntity?,
             val damagee: LivingEntity

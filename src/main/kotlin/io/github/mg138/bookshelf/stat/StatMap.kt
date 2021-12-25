@@ -1,6 +1,5 @@
-package io.github.mg138.bookshelf.stat.utils
+package io.github.mg138.bookshelf.stat
 
-import io.github.mg138.bookshelf.stat.MutableStated
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.bookshelf.stat.type.StatTypeManager
