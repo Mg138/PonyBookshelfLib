@@ -109,8 +109,7 @@ object Preset {
             }
 
         val DEFENSE_PHYSICAL =
-            object :
-                DefenseType.DefenseTypeTemplate(Main.modId - "defense_physical", DamageTypes.DAMAGE_PHYSICAL) {}
+            object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_physical", DamageTypes.DAMAGE_PHYSICAL) {}
 
         val DEFENSE_TERRA =
             object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_terra", DamageTypes.DAMAGE_TERRA) {}
@@ -174,7 +173,7 @@ object Preset {
                     }
                 }
 
-                val pos = damagee.getDisplayPos()
+                val pos = damagee.getDisplayPos().add(0.0, 1.0, 0.0)
                 val dPos = Vec3d(0.0, 0.0, 0.0)
                 val count = (15 * p).toInt()
 
