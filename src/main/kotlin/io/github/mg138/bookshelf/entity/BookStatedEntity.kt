@@ -21,6 +21,7 @@ abstract class BookStatedEntity<T : BookStatedEntity<T>>(
     override fun getStat(type: StatType) = statMap.getStat(type)
     override fun stats() = statMap.stats()
     override fun types() = statMap.types()
+    override fun pairs() = statMap.pairs()
     override fun iterator() = statMap.iterator()
 
     fun onBeingAttacked(

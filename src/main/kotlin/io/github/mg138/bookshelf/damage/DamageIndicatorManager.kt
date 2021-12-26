@@ -65,7 +65,7 @@ object DamageIndicatorManager {
         val r = random * Math.PI * 2.0
 
         val x = pos.x + cos(r) / 2.0
-        val y = pos.y + random / 2.0
+        val y = pos.y + random
         val z = pos.z + sin(r) / 2.0
 
         val xV = cos(r) / 6.0

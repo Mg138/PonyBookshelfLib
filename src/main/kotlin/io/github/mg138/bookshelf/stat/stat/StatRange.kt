@@ -39,11 +39,18 @@ class StatRange(min: Double, max: Double) : Stat {
     override operator fun plus(increment: Stat?): StatRange {
         if (increment == null) return this
 
-        when (increment) {
-            is StatRange -> return StatRange(
+        return when (increment) {
+            is StatRange -> StatRange(
                 min = min + increment.min,
                 max = max + increment.max
             )
+            is StatSingle -> {
+                val it = increment.result()
+                StatRange(
+                    min = min + it,
+                    max = max + it
+                )
+            }
             else -> throw IllegalArgumentException(incompatible(increment))
         }
     }
@@ -51,11 +58,18 @@ class StatRange(min: Double, max: Double) : Stat {
     override operator fun minus(decrement: Stat?): StatRange {
         if (decrement == null) return this
 
-        when (decrement) {
-            is StatRange -> return StatRange(
+        return when (decrement) {
+            is StatRange -> StatRange(
                 min = min - decrement.min,
                 max = max - decrement.max
             )
+            is StatSingle -> {
+                val it = decrement.result()
+                StatRange(
+                    min = min + it,
+                    max = max + it
+                )
+            }
             else -> throw IllegalArgumentException(incompatible(decrement))
         }
     }
@@ -138,5 +152,5 @@ class StatRange(min: Double, max: Double) : Stat {
 
     override fun hashCode() = 31 * min.hashCode() + max.hashCode()
 
-    override fun toString() = "$min, $max"
+    override fun toString() = "$min - $max"
 }

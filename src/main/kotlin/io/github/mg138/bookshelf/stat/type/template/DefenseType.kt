@@ -20,8 +20,8 @@ abstract class DefenseType(id: Identifier) :
             val damagee = event.damagee
 
             DamageManager[damagee]?.let {
-                it[damageType]?.let { damage ->
-                    DamageManager.queueDamage(damagee, damageType, act(damage, event.stat))
+                it.computeIfPresent(damageType) { _, damage ->
+                    act(damage, event.stat)
                 }
             }
             return ActionResult.PASS

@@ -12,9 +12,12 @@ class StatSingle(private val stat: Double) : Stat {
     override operator fun plus(increment: Stat?): StatSingle {
         if (increment == null) return this
 
-        when (increment) {
-            is StatSingle -> return StatSingle(
+        return when (increment) {
+            is StatSingle -> StatSingle(
                 stat = stat + increment.stat
+            )
+            is StatRange -> StatSingle(
+                stat = stat + increment.middle
             )
             else -> throw IllegalArgumentException(incompatible(increment))
         }
@@ -23,9 +26,12 @@ class StatSingle(private val stat: Double) : Stat {
     override operator fun minus(decrement: Stat?): StatSingle {
         if (decrement == null) return this
 
-        when (decrement) {
-            is StatSingle -> return StatSingle(
+        return when (decrement) {
+            is StatSingle -> StatSingle(
                 stat = stat - decrement.stat
+            )
+            is StatRange -> StatSingle(
+                stat = stat - decrement.middle
             )
             else -> throw IllegalArgumentException(incompatible(decrement))
         }

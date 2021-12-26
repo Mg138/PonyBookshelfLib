@@ -5,7 +5,6 @@ import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.world.World
 
-
 abstract class BookEntity<T: BookEntity<T>>(
     type: EntityType<T>, world: World
 ) : PolymerEntity, LivingEntity(type, world)

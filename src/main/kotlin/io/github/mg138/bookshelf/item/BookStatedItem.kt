@@ -1,12 +1,14 @@
 package io.github.mg138.bookshelf.item
 
-import io.github.mg138.bookshelf.stat.Stated
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.bookshelf.stat.StatMap
 import io.github.mg138.bookshelf.utils.StatUtil.filterAndSort
+import net.minecraft.client.item.TooltipContext
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
+import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
@@ -17,23 +19,42 @@ import net.minecraft.world.World
 abstract class BookStatedItem(
     id: Identifier,
     bookItemSettings: BookItemSettings,
-    settings: Settings, vanillaItem: Item,
-    private val statMap: StatMap
-) : BookItem(id, bookItemSettings, settings, vanillaItem), Stated {
-    override fun getStatResult(type: StatType) = statMap.getStatResult(type)
-    override fun getStat(type: StatType) = statMap.getStat(type)
-    override fun stats() = statMap.stats()
-    override fun types() = statMap.types()
-    override fun iterator() = statMap.iterator()
+    settings: Settings, vanillaItem: Item
+) : BookItem(id, bookItemSettings, settings, vanillaItem) {
+    abstract fun getStatMap(itemStack: ItemStack?): StatMap
+
+    fun getStatResult(type: StatType, itemStack: ItemStack? = null) =
+        getStatMap(itemStack).getStatResult(type)
+
+    fun getStat(type: StatType, itemStack: ItemStack? = null) =
+        getStatMap(itemStack).getStat(type)
+
+    fun types(itemStack: ItemStack? = null) =
+        getStatMap(itemStack).types()
+
+    fun stats(itemStack: ItemStack? = null) =
+        getStatMap(itemStack).stats()
+
+    fun pairs(itemStack: ItemStack? = null) =
+        getStatMap(itemStack).pairs()
+
+    fun iterator(itemStack: ItemStack? = null) =
+        getStatMap(itemStack).iterator()
+
+    override fun appendTooltip(itemStack: ItemStack, world: World?, tooltip: MutableList<Text>, context: TooltipContext) {
+        super.appendTooltip(itemStack, world, tooltip, context)
+        tooltip.addAll(getStatMap(itemStack).lores())
+    }
 
     fun onAttackEntity(
+        itemStack: ItemStack,
         damager: LivingEntity,
-        world: World,
         hand: Hand,
         damagee: LivingEntity,
-        hitResult: EntityHitResult?
+        hitResult: EntityHitResult?,
+        world: World
     ): ActionResult {
-        val sortedMap = statMap.filterAndSort<StatEvent.OnDamageCallback> { it.onDamagePriority }
+        val sortedMap = pairs(itemStack).filterAndSort<StatEvent.OnDamageCallback> { it.onDamagePriority }
 
         for ((type, stat) in sortedMap) {
             val result = type.onDamage(
@@ -47,10 +68,11 @@ abstract class BookStatedItem(
     }
 
     fun afterAttackEntity(
+        itemStack: ItemStack?,
         damager: LivingEntity,
         damagee: LivingEntity
     ): ActionResult {
-        val sortedMap = statMap.filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
+        val sortedMap = pairs(itemStack).filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
 
         for ((type, stat) in sortedMap) {
             val result = type.afterDamage(

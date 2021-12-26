@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.item.ItemStack
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.EntityHitResult
@@ -31,6 +32,7 @@ object DamageManager {
 
     fun resolveDamage(
         damagee: LivingEntity,
+        itemStack: ItemStack? = null,
         item: BookStatedItem? = null,
         damager: LivingEntity? = null,
         source: DamageSource = DamageSource.GENERIC
@@ -46,7 +48,7 @@ object DamageManager {
                 DamageIndicatorManager.displayDamage(damage, type, damagee)
 
                 if (item != null) {
-                    item.afterAttackEntity(damager, damagee)
+                    item.afterAttackEntity(itemStack, damager, damagee)
 
                     if (damagee is BookStatedEntity<*>) {
                         damagee.afterBeingAttacked(damager, item)
@@ -73,9 +75,10 @@ object DamageManager {
         if (damagee.isDead) return ActionResult.FAIL
         if (damagee is DamageIndicatorManager.Indicator) return ActionResult.FAIL
 
-        val item = damager.mainHandStack.item as? BookStatedItem ?: return ActionResult.PASS
+        val itemStack = damager.getStackInHand(hand)
+        val item = itemStack.item as? BookStatedItem ?: return ActionResult.PASS
 
-        val result = item.onAttackEntity(damager, world, hand, damagee, hitResult)
+        val result = item.onAttackEntity(itemStack, damager, hand, damagee, hitResult, world)
         if (result != ActionResult.PASS) return result
 
         if (damagee is BookStatedEntity<*>) {
@@ -85,7 +88,7 @@ object DamageManager {
         DamageEvent.ON_BOOK_DAMAGE.invoker().onDamage(
             DamageEvent.OnBookDamageCallback.OnBookDamageEvent(item, damager, damagee, world, hand, hitResult)
         )
-        resolveDamage(damagee, item, damager, DamageSource.player(damager))
+        resolveDamage(damagee, itemStack, item, damager, DamageSource.player(damager))
 
         return result
     }

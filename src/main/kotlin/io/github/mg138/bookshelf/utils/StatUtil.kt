@@ -1,17 +1,25 @@
 package io.github.mg138.bookshelf.utils
 
-import io.github.mg138.bookshelf.stat.StatMap
-import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
 import kotlin.math.max
 
 object StatUtil {
-    inline fun <reified T> StatMap.filterAndSort(crossinline sortBy: (T) -> Int) =
-        this.filterType<T>()
-            .asIterable()
-            .sortedBy { (type, _) -> sortBy(type) }
-            .onEach { (type, _) -> println((type as StatType).id) }
+    inline fun <reified T> Iterable<Pair<StatType, Stat>>.filterAndSort(crossinline sortBy: (T) -> Int): List<Pair<T, Stat>> {
+        val map = this.toMap()
+
+        return this.asSequence()
+            .map { it.first }
+            .filterIsInstance<T>()
+            .sortedBy { sortBy(it) }
+            .map { it to map[it as StatType]!! }
+            .toList()
+    }
+
+
+    inline fun <T> Iterable<T>.sumOf(function: (T) -> Stat?) =
+        this.map { function(it) }
+            .reduce { a, b -> a?.plus(b) }
 
     private fun percent(m: Double, k: Int) = max(m / (m + k), 0.0)
 
@@ -66,5 +74,5 @@ object StatUtil {
         positiveModifier(damage, modifier.result(), 2, ignoreNegative)
 
     fun defense(damage: Stat, defense: Stat, ignoreNegative: Boolean = false) =
-        negativeModifier(damage, defense.result(), 100, ignoreNegative) - damage
+        negativeModifier(damage, defense.result(), 100, ignoreNegative)
 }

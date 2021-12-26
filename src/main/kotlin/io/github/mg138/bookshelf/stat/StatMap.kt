@@ -13,6 +13,10 @@ open class StatMap(
         fun defaultMap(): MutableMap<StatType, Stat> = mutableMapOf()
     }
 
+    fun lores() = StatTypeManager.registeredTypes
+        .filter { this.containsType(it) }
+        .map { it.name(this[it]!!) }
+
     constructor(stats: StatMap) : this(stats.map)
 
     fun filterKeys(predicate: (StatType) -> Boolean) = map.filterKeys(predicate).toMutableMap()
@@ -50,10 +54,12 @@ open class StatMap(
 
     // Stated
 
-    override fun types() = map.keys
-    override fun stats() = map.values
     override fun getStatResult(type: StatType) = this.getStat(type)?.result() ?: 0.0
     override fun getStat(type: StatType) = map[type]
+    override fun types(): Set<StatType> = map.keys
+    override fun stats(): Collection<Stat> = map.values
+    override fun pairs(): List<Pair<StatType, Stat>> = map.entries.map { it.toPair() }
+    override fun iterator() = this.pairs().iterator()
 
     // MutableStated
 
@@ -78,26 +84,5 @@ open class StatMap(
         if (map != other.map) return false
 
         return true
-    }
-
-    // Iterable
-
-    override fun iterator() = object : Iterator<Pair<StatType, Stat>> {
-        val it = this@StatMap
-        val keys = it.map.keys.iterator()
-
-        override fun hasNext() = keys.hasNext()
-
-        override fun next() = keys.next().let { type ->
-            it.getStat(type)?.let {
-                Pair(type, it)
-            } ?: throw IllegalArgumentException(
-                """
-                Error when iterating through ${it::class.simpleName}: it doesn't contain ${type.id}!
-                Did the values change during iteration?
-                Contents: $it
-                """.trimMargin()
-            )
-        }
     }
 }

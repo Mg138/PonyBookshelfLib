@@ -52,6 +52,7 @@ abstract class StatType(
     val iconKey = "$translationKey.icon"
     val indicatorTranslationKey = "$translationKey.indicator"
 
+    open val loreKey = "pony_bookshelf.stat_type.lore.format"
     open val icon = TranslatableText(iconKey)
 
     open fun name(stat: Stat = Stat.EMPTY) = TranslatableText(

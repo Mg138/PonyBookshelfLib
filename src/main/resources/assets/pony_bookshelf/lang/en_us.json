@@ -1,46 +1,49 @@
 {
+    "entity.pony_bookshelf.test_dummy_entity": "Test Dummy",
+    "item.pony_bookshelf.fabric_item": "Fabric Item",
+
     "pony_bookshelf.stat_type.pony_bookshelf.damage_tempus.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_tempus": "%s Tempest Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_tempus": "%s §6Tempest Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_tempus.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_aqua.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_aqua": "%s Water Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_aqua": "%s §6Water Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_aqua.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_ignis.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_ignis": "%s Flame Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_ignis": "%s §6Flame Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_ignis.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_physical.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_physical": "%s Physical Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_physical": "%s §6Physical Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_physical.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_true.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_true": "%s True Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_true": "%s §6True Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_true.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_bleed.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_bleed": "%s Bleeding Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_bleed": "%s §6Bleeding Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_bleed.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_terra.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_terra": "%s Earth Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_terra": "%s §6Earth Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_terra.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_umbra.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_umbra": "%s Dark Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_umbra": "%s §6Dark Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_umbra.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_lumen.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_lumen": "%s Light Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_lumen": "%s §6Light Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_lumen.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_none.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_none": "%s Unknown Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_none": "%s §6Unknown Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_none.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder.icon": "%s",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder": "%s Thunder Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder": "%s §6Thunder Damage: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder.indicator": "%s %s",
 
 
@@ -56,46 +59,46 @@
 
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_tempus.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_tempus": "%s Tempest Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_tempus": "%s §6Tempest Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_tempus.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_aqua.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_aqua": "%s Water Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_aqua": "%s §6Water Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_aqua.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_ignis.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_ignis": "%s Flame Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_ignis": "%s §6Flame Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_ignis.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_physical.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_physical": "%s Physical Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_physical": "%s §6Physical Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_physical.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_true.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_true": "%s True Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_true": "%s §6True Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_true.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_bleed.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_bleed": "%s Bleeding Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_bleed": "%s §6Bleeding Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_bleed.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_terra.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_terra": "%s Earth Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_terra": "%s §6Earth Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_terra.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_umbra.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_umbra": "%s Dark Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_umbra": "%s §6Dark Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_umbra.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_lumen.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_lumen": "%s Light Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_lumen": "%s §6Light Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_lumen.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_none.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_none": "%s Unknown Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_none": "%s §6Unknown Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_none.indicator": "%s %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_thunder.icon": "%s",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_thunder": "%s Thunder Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_thunder": "%s §6Thunder Defense: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_thunder.indicator": "%s %s"
 }
