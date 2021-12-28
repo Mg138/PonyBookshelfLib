@@ -8,26 +8,26 @@ import net.minecraft.util.ActionResult
 
 object BookItemPrevention {
     fun register() {
-        AttackBlockCallback.EVENT.register { player, _, hand, _, _ ->
-            if (player.getStackInHand(hand).item is BookItem) {
-                ActionResult.FAIL
-            } else {
-                ActionResult.PASS
-            }
-        }
-        UseBlockCallback.EVENT.register { player, _, hand, _ ->
-            if (player.getStackInHand(hand).item is BookItem) {
-                ActionResult.FAIL
-            } else {
-                ActionResult.PASS
-            }
-        }
-        UseEntityCallback.EVENT.register { player, _, hand, _, _ ->
-            if (player.getStackInHand(hand).item is BookItem) {
-                ActionResult.FAIL
-            } else {
-                ActionResult.PASS
-            }
-        }
+        //AttackBlockCallback.EVENT.register { player, _, hand, _, _ ->
+        //    if (player.mainHandStack.item is BookItem) {
+        //        ActionResult.FAIL
+        //    } else {
+        //        ActionResult.PASS
+        //    }
+        //}
+        //UseBlockCallback.EVENT.register { player, _, hand, _ ->
+        //    if (player.mainHandStack.item is BookItem) {
+        //        ActionResult.FAIL
+        //    } else {
+        //        ActionResult.PASS
+        //    }
+        //}
+        //UseEntityCallback.EVENT.register { player, _, hand, _, _ ->
+        //    if (player.mainHandStack.item is BookItem) {
+        //        ActionResult.FAIL
+        //    } else {
+        //        ActionResult.PASS
+        //    }
+        //}
     }
 }
