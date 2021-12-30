@@ -227,7 +227,7 @@ object Preset {
                 override val onDamagePriority = 1000
 
                 override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
-                    val power = event.item.getStat(PowerTypes.POWER_CRITICAL) ?: return ActionResult.PASS
+                    val power = event.stats.getStat(PowerTypes.POWER_CRITICAL) ?: return ActionResult.PASS
                     val p = calculate(event.stat, power)
 
                     return PowerTypes.POWER_CRITICAL.onDamage(event.copy(stat = p))
@@ -239,7 +239,7 @@ object Preset {
                 override val afterDamagePriority = 1000
 
                 override fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
-                    val power = event.item.getStat(PowerTypes.POWER_DRAIN) ?: return ActionResult.PASS
+                    val power = event.stats.getStat(PowerTypes.POWER_DRAIN) ?: return ActionResult.PASS
                     val p = calculate(event.stat, power)
 
                     return PowerTypes.POWER_DRAIN.afterDamage(event.copy(stat = p))

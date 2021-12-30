@@ -1,6 +1,7 @@
 package io.github.mg138.bookshelf.stat.event
 
 import io.github.mg138.bookshelf.item.BookStatedItem
+import io.github.mg138.bookshelf.stat.data.Stats
 import io.github.mg138.bookshelf.stat.stat.Stat
 import net.minecraft.entity.LivingEntity
 import net.minecraft.util.ActionResult
@@ -12,7 +13,7 @@ class StatEvent {
     fun interface OnDamageCallback {
         data class OnDamageEvent(
             val stat: Stat,
-            val item: BookStatedItem,
+            val stats: Stats,
             val damager: LivingEntity,
             val damagee: LivingEntity,
             val world: World,
@@ -29,7 +30,7 @@ class StatEvent {
     fun interface AfterDamageCallback {
         data class AfterDamageEvent(
             val stat: Stat,
-            val item: BookStatedItem,
+            val stats: Stats,
             val damager: LivingEntity,
             val damagee: LivingEntity
         )

@@ -1,4 +1,4 @@
-package io.github.mg138.bookshelf.stat
+package io.github.mg138.bookshelf.stat.data
 
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
@@ -8,14 +8,13 @@ import net.minecraft.util.Identifier
 @Suppress("UNUSED")
 open class StatMap(
     private val map: MutableMap<StatType, Stat> = defaultMap()
-) : MutableStated {
+) : MutableStats {
     companion object {
+        val EMPTY
+            get() = StatMap()
+
         fun defaultMap(): MutableMap<StatType, Stat> = mutableMapOf()
     }
-
-    fun lores() = StatTypeManager.registeredTypes
-        .filter { this.containsType(it) }
-        .map { it.name(this[it]!!) }
 
     constructor(stats: StatMap) : this(stats.map)
 
@@ -60,6 +59,10 @@ open class StatMap(
     override fun stats(): Collection<Stat> = map.values
     override fun pairs(): List<Pair<StatType, Stat>> = map.entries.map { it.toPair() }
     override fun iterator() = this.pairs().iterator()
+    override fun lores() = StatTypeManager.registeredTypes
+        .filter { this.containsType(it) }
+        .map { it.name(this[it]!!) }
+
 
     // MutableStated
 

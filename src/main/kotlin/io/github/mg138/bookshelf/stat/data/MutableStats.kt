@@ -1,9 +1,9 @@
-package io.github.mg138.bookshelf.stat
+package io.github.mg138.bookshelf.stat.data
 
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
 
-interface MutableStated : Stated {
+interface MutableStats : Stats {
     /**
      * Adds the stat onto pre-existing value, or put it if there wasn't one.
      * @param type the type of the stat

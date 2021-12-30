@@ -2,9 +2,10 @@ package io.github.mg138.bookshelf.entity.test
 
 import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.entity.BookStatedEntity
+import io.github.mg138.bookshelf.entity.BookStaticStatedEntity
 import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.Preset
-import io.github.mg138.bookshelf.stat.StatMap
+import io.github.mg138.bookshelf.stat.data.StatMap
 import io.github.mg138.bookshelf.utils.minus
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
@@ -21,7 +22,7 @@ import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
 class DummyEntity(type: EntityType<DummyEntity>, world: World) :
-    BookStatedEntity<DummyEntity>(type, world, StatMap().apply {
+    BookStaticStatedEntity<DummyEntity>(type, world, StatMap().apply {
         putStat(Preset.DefenseTypes.DEFENSE_AQUA, StatSingle(2000.0))
     }) {
     companion object {

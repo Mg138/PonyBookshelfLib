@@ -3,7 +3,7 @@ package io.github.mg138.bookshelf.item.test
 import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.item.BookItemSettings
 import io.github.mg138.bookshelf.item.BookStaticStatedItem
-import io.github.mg138.bookshelf.stat.StatMap
+import io.github.mg138.bookshelf.stat.data.StatMap
 import io.github.mg138.bookshelf.stat.stat.StatRange
 import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.Preset

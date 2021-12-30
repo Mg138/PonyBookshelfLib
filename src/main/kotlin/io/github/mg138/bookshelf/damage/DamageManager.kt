@@ -2,6 +2,7 @@ package io.github.mg138.bookshelf.damage
 
 import io.github.mg138.bookshelf.entity.BookStatedEntity
 import io.github.mg138.bookshelf.item.BookStatedItem
+import io.github.mg138.bookshelf.item.StatedItem
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback
@@ -33,7 +34,7 @@ object DamageManager {
     fun resolveDamage(
         damagee: LivingEntity,
         itemStack: ItemStack? = null,
-        item: BookStatedItem? = null,
+        item: StatedItem? = null,
         damager: LivingEntity? = null,
         source: DamageSource = DamageSource.GENERIC
     ) {
@@ -76,7 +77,7 @@ object DamageManager {
         if (damagee is DamageIndicatorManager.Indicator) return ActionResult.FAIL
 
         val itemStack = damager.getStackInHand(hand)
-        val item = itemStack.item as? BookStatedItem ?: return ActionResult.PASS
+        val item = itemStack.item as? StatedItem ?: return ActionResult.PASS
 
         val result = item.onAttackEntity(itemStack, damager, hand, damagee, hitResult, world)
         if (result != ActionResult.PASS) return result
