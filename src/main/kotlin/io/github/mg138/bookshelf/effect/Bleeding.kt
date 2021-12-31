@@ -19,7 +19,7 @@ class Bleeding : DamagingEffect(
     Preset.DamageTypes.DAMAGE_BLEED
 ) {
     override fun visualEffect(entity: LivingEntity, amplifier: Int) {
-        val pos = entity.getDisplayPos()
+        val pos = entity.pos
         val dPos = Vec3d(0.0, 0.0, 0.0)
         val count = amplifier / 4 + 10
 

@@ -6,6 +6,6 @@ import net.minecraft.util.math.Vec3d
 object EntityUtil {
     fun Entity.getDisplayPos(): Vec3d {
         val pos = this.pos
-        return Vec3d(pos.x, this.eyeY - 2.0, pos.z)
+        return Vec3d(pos.x, this.eyeY, pos.z)
     }
 }

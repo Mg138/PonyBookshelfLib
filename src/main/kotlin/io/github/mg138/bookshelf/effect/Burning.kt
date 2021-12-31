@@ -17,7 +17,7 @@ class Burning : DamagingEffect(
     Preset.DamageTypes.DAMAGE_IGNIS
 ) {
     override fun visualEffect(entity: LivingEntity, amplifier: Int) {
-        val pos = entity.getDisplayPos()
+        val pos = entity.pos
         val dPos = Vec3d(0.0, 0.0, 0.0)
         val count = amplifier / 16 + 10
 

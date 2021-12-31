@@ -173,7 +173,7 @@ object Preset {
                     }
                 }
 
-                val pos = damagee.getDisplayPos().add(0.0, 1.0, 0.0)
+                val pos = damagee.pos
                 val dPos = Vec3d(0.0, 0.0, 0.0)
                 val count = (15 * p).toInt()
 

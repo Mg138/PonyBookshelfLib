@@ -6,6 +6,7 @@ import io.github.mg138.bookshelf.utils.EntityUtil.getDisplayPos
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.Entity
+import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
@@ -20,10 +21,8 @@ object DamageIndicatorManager {
         damage: Double, type: StatType,
         world: World, x: Double, y: Double, z: Double
     ) : ArmorStandEntity(world, x, y, z) {
-        override fun isMarker() = true
-        override fun isAttackable() = false
-
         init {
+            isMarker = true
             noClip = true
             isInvisible = true
             isInvulnerable = true
@@ -61,11 +60,12 @@ object DamageIndicatorManager {
     fun displayDamage(damage: Double, type: StatType, entity: Entity) {
         val world = entity.world
         val pos = entity.getDisplayPos()
+
         val random = random.nextDouble()
         val r = random * Math.PI * 2.0
 
         val x = pos.x + cos(r) / 2.0
-        val y = pos.y + random
+        val y = pos.y + random - 0.5
         val z = pos.z + sin(r) / 2.0
 
         val xV = cos(r) / 6.0

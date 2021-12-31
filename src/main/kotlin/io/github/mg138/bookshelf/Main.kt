@@ -8,7 +8,7 @@ import io.github.mg138.bookshelf.damage.DamageIndicatorManager
 import io.github.mg138.bookshelf.damage.DamageManager
 import io.github.mg138.bookshelf.effect.Bleeding
 import io.github.mg138.bookshelf.effect.Burning
-import io.github.mg138.bookshelf.entity.test.DummyEntity
+import io.github.mg138.bookshelf.entity.impl.DummyEntity
 import io.github.mg138.bookshelf.item.test.FabricItem
 import io.github.mg138.bookshelf.stat.type.Preset
 import io.github.mg138.bookshelf.stat.type.StatTypeManager

@@ -33,5 +33,6 @@
     "java": ">=16",
     "cloth-config": "*",
     "polymer": "*"
-  }
+  },
+  "accessWidener" : "pony_bookshelf.accesswidener"
 }

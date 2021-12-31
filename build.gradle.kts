@@ -20,6 +20,12 @@ group = mavenGroup
 
 minecraft {}
 
+loom {
+    this.accessWidenerPath.set {
+        file("src/main/resources/pony_bookshelf.accesswidener")
+    }
+}
+
 repositories {
     maven("https://maven.shedaniel.me/")
     maven("https://maven.nucleoid.xyz")
