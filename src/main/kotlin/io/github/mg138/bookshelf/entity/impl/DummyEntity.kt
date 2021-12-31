@@ -115,7 +115,7 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
             )
         }
         val time = age.element % 20
-        list[time] = amount
+        list[time] += amount
     }
 
     override fun takeKnockback(strength: Double, x: Double, z: Double) {
