@@ -59,7 +59,8 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
                 list[age % 20] = 0.0F
 
                 val avg = list.sum().roundToInt() / list.size
-                player.sendMessage(LiteralText(avg.toString()), true)
+                val str = "DPS: $avg"
+                player.sendMessage(LiteralText(str), true)
             }
 
             toRemove.forEach {
