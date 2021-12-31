@@ -25,6 +25,7 @@ import net.minecraft.util.Arm
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 import kotlin.jvm.internal.Ref
+import kotlin.math.roundToInt
 
 class DummyEntity(type: EntityType<DummyEntity>, world: World) :
     BookStaticStatedEntity<DummyEntity>(type, world, StatMap().apply {
@@ -50,14 +51,14 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
             map.forEach { (player, pair) ->
                 val age = pair.first.apply { element++ }.element
 
-                if (age >= 60) {
+                if (age >= 200) {
                     toRemove += player
                 }
 
                 val list = pair.second
                 list[age % 20] = 0.0F
 
-                val avg = list.sum() / list.size
+                val avg = list.sum().roundToInt() / list.size
                 player.sendMessage(LiteralText(avg.toString()), true)
             }
 

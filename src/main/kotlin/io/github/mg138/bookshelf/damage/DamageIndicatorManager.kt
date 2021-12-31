@@ -6,7 +6,6 @@ import io.github.mg138.bookshelf.utils.EntityUtil.getDisplayPos
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.Entity
-import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.decoration.ArmorStandEntity
 import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
@@ -16,6 +15,7 @@ import kotlin.math.sin
 
 object DamageIndicatorManager {
     private val random = Random()
+    private val TWO_PI = Math.PI * 2.0
 
     class Indicator(
         damage: Double, type: StatType,
@@ -61,16 +61,16 @@ object DamageIndicatorManager {
         val world = entity.world
         val pos = entity.getDisplayPos()
 
-        val random = random.nextDouble()
-        val r = random * Math.PI * 2.0
+        val rX = random.nextDouble() * TWO_PI
+        val rZ = random.nextDouble() * TWO_PI
 
-        val x = pos.x + cos(r) / 2.0
-        val y = pos.y + random - 0.5
-        val z = pos.z + sin(r) / 2.0
+        val x = pos.x + cos(rX) / 2.0
+        val y = pos.y + random.nextDouble() - 0.5
+        val z = pos.z + sin(rZ) / 2.0
 
-        val xV = cos(r) / 6.0
+        val xV = cos(rX) / 6.0
         val yV = 0.15
-        val zV = sin(r) / 6.0
+        val zV = sin(rZ) / 6.0
 
         val indicator = Indicator(damage, type, world, x, y, z)
         indicator.velocity = Vec3d(xV, yV, zV)
