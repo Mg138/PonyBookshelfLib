@@ -52,7 +52,7 @@ object DamageManager {
                     item.afterAttackEntity(itemStack, damager, damagee)
 
                     if (damagee is BookStatedEntity<*>) {
-                        damagee.afterBeingAttacked(damager, item)
+                        damagee.afterBeingAttacked(damager)
                     }
                 }
             }

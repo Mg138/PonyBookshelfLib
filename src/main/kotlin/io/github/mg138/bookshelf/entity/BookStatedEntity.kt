@@ -53,8 +53,7 @@ abstract class BookStatedEntity<T : BookStatedEntity<T>>(
     }
 
     fun afterBeingAttacked(
-        damager: LivingEntity,
-        item: StatedItem
+        damager: LivingEntity
     ): ActionResult {
         val sortedMap = getStatMap().filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
 
