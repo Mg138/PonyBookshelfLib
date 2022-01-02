@@ -7,6 +7,7 @@ import io.github.mg138.bookshelf.stat.type.StatType
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.entity.LivingEntity
+import net.minecraft.item.ItemStack
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.EntityHitResult
@@ -15,7 +16,6 @@ import net.minecraft.world.World
 object DamageEvent {
     fun interface OnBookDamageCallback {
         data class OnBookDamageEvent(
-            val item: StatedItem,
             val damager: LivingEntity,
             val damagee: LivingEntity,
             val world: World,
@@ -43,7 +43,7 @@ object DamageEvent {
     fun interface AfterBookDamageCallback {
         data class AfterBookDamageEvent(
             val damages: Map<StatType, Double>,
-            val item: StatedItem?,
+            val items: Map<ItemStack, StatedItem>?,
             val damager: LivingEntity?,
             val damagee: LivingEntity
         )

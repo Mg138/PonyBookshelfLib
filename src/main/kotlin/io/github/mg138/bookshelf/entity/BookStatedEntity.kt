@@ -34,7 +34,6 @@ abstract class BookStatedEntity<T : BookStatedEntity<T>>(
         getStatMap().pairs()
 
     fun onBeingAttacked(
-        item: StatedItem,
         damager: LivingEntity,
         world: World,
         hand: Hand,
