@@ -15,7 +15,7 @@ public class IndicatorMixin {
                     target = "Lnet/minecraft/entity/decoration/ArmorStandEntity;canClip()Z"
             )
     )
-    public boolean modifiedCanClip(ArmorStandEntity e) {
+    public boolean pony_bookshelf_canClip(ArmorStandEntity e) {
         if (e instanceof DamageIndicatorManager.Indicator) return true;
 
         return !e.isMarker() && !e.hasNoGravity();
