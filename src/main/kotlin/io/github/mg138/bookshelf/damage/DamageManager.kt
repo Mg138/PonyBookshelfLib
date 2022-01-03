@@ -1,6 +1,7 @@
 package io.github.mg138.bookshelf.damage
 
 import io.github.mg138.bookshelf.entity.BookStatedEntity
+import io.github.mg138.bookshelf.item.Armor
 import io.github.mg138.bookshelf.item.StatedItem
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
@@ -80,8 +81,11 @@ object DamageManager {
         val map: MutableMap<ItemStack, StatedItem> = mutableMapOf()
 
         damager.getStackInHand(hand).let { stackInHand ->
-            (stackInHand.item as? StatedItem)?.let {
-                map[stackInHand] = it
+            val item = stackInHand.item
+            if (item !is StatedItem) return ActionResult.FAIL
+
+            if (item !is Armor) {
+                map[stackInHand] = item
             }
         }
 
