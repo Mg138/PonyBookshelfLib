@@ -82,11 +82,9 @@ object DamageManager {
 
         damager.getStackInHand(hand).let { stackInHand ->
             val item = stackInHand.item
-            if (item !is StatedItem) return ActionResult.FAIL
+            if (item !is StatedItem || item is Armor) return ActionResult.FAIL
 
-            if (item !is Armor) {
-                map[stackInHand] = item
-            }
+            map[stackInHand] = item
         }
 
         ArmorManager[damager].asList().let { armorList ->
