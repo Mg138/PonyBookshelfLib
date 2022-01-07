@@ -5,11 +5,11 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 
-abstract class BookStaticStatedItem(
+abstract class SimpleBookStaticStatedItem(
     id: Identifier,
     bookItemSettings: BookItemSettings,
     settings: Settings, vanillaItem: Item,
     private val statMap: StatMap
-) : BookStatedItem(id, bookItemSettings, settings, vanillaItem) {
+) : SimpleBookStatedItem(id, bookItemSettings, settings, vanillaItem) {
     override fun getStatMap(itemStack: ItemStack?) = statMap
 }

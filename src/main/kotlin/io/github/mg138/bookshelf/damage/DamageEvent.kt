@@ -2,25 +2,20 @@ package io.github.mg138.bookshelf.damage
 
 import io.github.mg138.bookshelf.damage.DamageEvent.AfterBookDamageCallback
 import io.github.mg138.bookshelf.damage.DamageEvent.OnBookDamageCallback
-import io.github.mg138.bookshelf.item.StatedItem
+import io.github.mg138.bookshelf.item.type.StatedItem
 import io.github.mg138.bookshelf.stat.type.StatType
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ActionResult
-import net.minecraft.util.Hand
-import net.minecraft.util.hit.EntityHitResult
-import net.minecraft.world.World
 
 object DamageEvent {
     fun interface OnBookDamageCallback {
         data class OnBookDamageEvent(
             val damager: LivingEntity,
-            val damagee: LivingEntity,
-            val world: World,
-            val hand: Hand,
-            val hitResult: EntityHitResult?
+            val damagee: LivingEntity?,
+            val items: Map<ItemStack, StatedItem>
         )
 
         fun onDamage(event: OnBookDamageEvent): ActionResult
@@ -42,10 +37,10 @@ object DamageEvent {
 
     fun interface AfterBookDamageCallback {
         data class AfterBookDamageEvent(
-            val damages: Map<StatType, Double>,
-            val items: Map<ItemStack, StatedItem>?,
             val damager: LivingEntity?,
-            val damagee: LivingEntity
+            val damagee: LivingEntity?,
+            val items: Map<ItemStack, StatedItem>,
+            val damages: Map<StatType, Double>
         )
 
         fun afterDamage(event: AfterBookDamageEvent): ActionResult

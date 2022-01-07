@@ -13,7 +13,7 @@ object StatTypeManager {
 
     fun register(type: StatType) {
         val id = type.id
-        if (type in types) throw IllegalArgumentException("Duplicate StatType of id $id!")
+        if (type in types) throw IllegalArgumentException("Duplicate StatType of identifier $id!")
 
         types += type
         map[id] = type

@@ -2,24 +2,28 @@ package io.github.mg138.bookshelf.stat.type
 
 import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.damage.DamageManager
+import io.github.mg138.bookshelf.effect.Bleeding
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.template.*
-import io.github.mg138.bookshelf.utils.StatUtil
-import io.github.mg138.bookshelf.utils.EntityUtil.getDisplayPos
 import io.github.mg138.bookshelf.utils.ObjectUtil
 import io.github.mg138.bookshelf.utils.ParticleUtil.spawnParticles
+import io.github.mg138.bookshelf.utils.StatUtil
 import io.github.mg138.bookshelf.utils.minus
 import net.minecraft.entity.EntityGroup
+import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.text.TextColor
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec3d
 import java.lang.Double.min
+import java.util.*
+import kotlin.math.abs
 
 @Suppress("UNUSED")
-object Preset {
+object StatTypes {
     object DamageTypes {
         val DAMAGE_TRUE =
             object : DamageType(Main.modId - "damage_true") {}
@@ -28,7 +32,7 @@ object Preset {
         val DAMAGE_PHYSICAL =
             object : DamageType(Main.modId - "damage_physical") {
                 init {
-                    numberColor = TextColor.fromRgb(DAMAGE_PHYSICAL_COLOR)
+                    color = TextColor.fromRgb(DAMAGE_PHYSICAL_COLOR)
                 }
             }
 
@@ -36,14 +40,14 @@ object Preset {
         val DAMAGE_TERRA =
             object : DamageType(Main.modId - "damage_terra") {
                 init {
-                    numberColor = TextColor.fromRgb(DAMAGE_TERRA_COLOR)
+                    color = TextColor.fromRgb(DAMAGE_TERRA_COLOR)
                 }
             }
         const val DAMAGE_TEMPUS_COLOR = 0xffe494
         val DAMAGE_TEMPUS =
             object : DamageType(Main.modId - "damage_tempus") {
                 init {
-                    numberColor = TextColor.fromRgb(DAMAGE_TEMPUS_COLOR)
+                    color = TextColor.fromRgb(DAMAGE_TEMPUS_COLOR)
                 }
             }
 
@@ -51,7 +55,7 @@ object Preset {
         val DAMAGE_IGNIS =
             object : DamageType(Main.modId - "damage_ignis") {
                 init {
-                    numberColor = TextColor.fromRgb(DAMAGE_IGNIS_COLOR)
+                    color = TextColor.fromRgb(DAMAGE_IGNIS_COLOR)
                 }
             }
 
@@ -59,7 +63,7 @@ object Preset {
         val DAMAGE_AQUA =
             object : DamageType(Main.modId - "damage_aqua") {
                 init {
-                    numberColor = TextColor.fromRgb(DAMAGE_AQUA_COLOR)
+                    color = TextColor.fromRgb(DAMAGE_AQUA_COLOR)
                 }
             }
 
@@ -67,7 +71,7 @@ object Preset {
         val DAMAGE_LUMEN =
             object : DamageType(Main.modId - "damage_lumen") {
                 init {
-                    numberColor = TextColor.fromRgb(DAMAGE_LUMEN_COLOR)
+                    color = TextColor.fromRgb(DAMAGE_LUMEN_COLOR)
                 }
             }
 
@@ -75,7 +79,7 @@ object Preset {
         val DAMAGE_UMBRA =
             object : DamageType(Main.modId - "damage_umbra") {
                 init {
-                    numberColor = TextColor.fromRgb(DAMAGE_UMBRA_COLOR)
+                    color = TextColor.fromRgb(DAMAGE_UMBRA_COLOR)
                 }
             }
 
@@ -83,7 +87,7 @@ object Preset {
         val DAMAGE_NONE =
             object : DamageType(Main.modId - "damage_none") {
                 init {
-                    numberColor = TextColor.fromRgb(DAMAGE_NONE_COLOR)
+                    color = TextColor.fromRgb(DAMAGE_NONE_COLOR)
                 }
             }
 
@@ -91,7 +95,7 @@ object Preset {
         val DAMAGE_BLEED =
             object : DamageType(Main.modId - "damage_bleed") {
                 init {
-                    numberColor = TextColor.fromRgb(DAMAGE_BLEED_COLOR)
+                    color = TextColor.fromRgb(DAMAGE_BLEED_COLOR)
                 }
             }
 
@@ -136,19 +140,19 @@ object Preset {
         val MODIFIER_ARTHROPOD =
             object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_arthropod") {
                 override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
-                    event.damagee.group == EntityGroup.ARTHROPOD
+                    event.damagee?.group == EntityGroup.ARTHROPOD
             }
 
         val MODIFIER_UNDEAD =
             object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_undead") {
                 override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
-                    event.damagee.group == EntityGroup.UNDEAD
+                    event.damagee?.group == EntityGroup.UNDEAD
             }
 
         val MODIFIER_UNDERWATER =
             object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_underwater") {
                 override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
-                    event.damagee.group == EntityGroup.AQUATIC
+                    event.damagee?.group == EntityGroup.AQUATIC
             }
 
         val MODIFIER_PLAYER =
@@ -157,27 +161,61 @@ object Preset {
                     event.damagee is PlayerEntity
             }
 
+        val MODIFIER_OVERALL =
+            object : ModifierType(Main.modId - "modifier_overall") {
+                override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
+                    val damagee = event.damagee
+
+                    if (damagee is LivingEntity) {
+                        DamageManager[damagee].forEach { (type, other) ->
+                            if (type is DamageType) {
+                                DamageManager.replaceDamage(damagee, type, other.modifier(1.0 - event.stat.result()))
+                            }
+                        }
+                    }
+                    return ActionResult.PASS
+                }
+            }
+
 
         val types = ObjectUtil.getFieldsOfObject<ModifierType, ModifierTypes>()
+    }
+
+    object StatusTypes {
+        val STATUS_BLEEDING = object : StatusType(Main.modId - "status_bleeding", { event ->
+            StatusEffectInstance(
+                Bleeding.BLEEDING,
+                80,
+                event.stat.result().toInt(),
+                true,
+                false
+            )
+        }) {
+        }
+
+        val types = ObjectUtil.getFieldsOfObject<StatusType, StatusTypes>()
     }
 
     object PowerTypes {
         class PowerCritical : PowerType(Main.modId - "power_critical") {
             fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
                 val damagee = event.damagee
-                val p = event.stat.result()
 
-                DamageManager[damagee]?.forEach { (type, other) ->
-                    if (type is DamageType) {
-                        DamageManager.queueDamage(damagee, type, other * p)
+                if (damagee is LivingEntity) {
+                    val p = event.stat.result()
+
+                    DamageManager[damagee].forEach { (type, other) ->
+                        if (type is DamageType) {
+                            DamageManager.queueDamage(damagee, type, other.modifier(p))
+                        }
                     }
+
+                    val pos = damagee.pos.add(0.0, 1.0, 0.0)
+                    val dPos = Vec3d.ZERO
+                    val count = (15 * p).toInt()
+
+                    damagee.spawnParticles(ParticleTypes.CRIT, pos, count, dPos, 0.5)
                 }
-
-                val pos = damagee.pos
-                val dPos = Vec3d(0.0, 0.0, 0.0)
-                val count = (15 * p).toInt()
-
-                damagee.spawnParticles(ParticleTypes.CRIT, pos, count, dPos, 0.5)
 
                 return ActionResult.PASS
             }
@@ -190,7 +228,7 @@ object Preset {
                 val damager = event.damager
                 val damagee = event.damagee
 
-                val mostRecentDamage = damagee.damageTracker.mostRecentDamage ?: return ActionResult.PASS
+                val mostRecentDamage = damagee?.damageTracker?.mostRecentDamage ?: return ActionResult.PASS
                 if (damager != mostRecentDamage.damageSource.source) return ActionResult.PASS
 
                 val maxHealth = damager.maxHealth.toDouble()
@@ -252,9 +290,39 @@ object Preset {
         val types = ObjectUtil.getFieldsOfObject<ChanceType, ChanceTypes>()
     }
 
+    object MiscTypes {
+        class AttackDelay : StatType(Main.modId - "attack_delay") {
+            private val map: MutableMap<UUID, Pair<Long, Int>> = mutableMapOf()
+
+            fun setDelay(damager: PlayerEntity, delay: Int) {
+                if (canDamage(damager)) {
+                    val time = damager.world.time
+
+                    map[damager.uuid] = time to delay
+                }
+            }
+
+            fun canDamage(damager: PlayerEntity): Boolean {
+                return map[damager.uuid]?.let { (time, delay) ->
+                    val d = abs(damager.world.time - time)
+                    //println("delay: $delay, delta: $d")
+
+                    d >= delay
+                } ?: true
+            }
+        }
+
+        val ATTACK_DELAY = AttackDelay()
+
+
+        val types = ObjectUtil.getFieldsOfObject<StatType, MiscTypes>()
+    }
+
     val types = DamageTypes.types +
             DefenseTypes.types +
             ModifierTypes.types +
+            StatusTypes.types +
             PowerTypes.types +
-            ChanceTypes.types
+            ChanceTypes.types +
+            MiscTypes.types
 }

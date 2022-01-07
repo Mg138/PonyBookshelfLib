@@ -1,0 +1,85 @@
+package io.github.mg138.bookshelf.projectile
+
+import eu.pb4.polymer.api.entity.PolymerEntity
+import io.github.mg138.bookshelf.Main
+import io.github.mg138.bookshelf.damage.DamageManager
+import io.github.mg138.bookshelf.item.type.StatedItem
+import io.github.mg138.bookshelf.utils.minus
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
+import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityType
+import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.SpawnGroup
+import net.minecraft.entity.damage.DamageSource
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.projectile.ArrowEntity
+import net.minecraft.entity.projectile.thrown.ThrownEntity
+import net.minecraft.item.ItemStack
+import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.hit.EntityHitResult
+import net.minecraft.util.registry.Registry
+import net.minecraft.world.World
+
+class ArrowProjectile : ThrownEntity, PolymerEntity {
+    override fun getPolymerEntityType(): EntityType<ArrowEntity> = EntityType.ARROW
+
+    constructor(type: EntityType<ArrowProjectile>, world: World)
+            : super(type, world)
+
+    constructor(owner: LivingEntity, world: World)
+            : super(ARROW_PROJECTILE, owner, world)
+
+    var itemStack: ItemStack? = null
+
+    override fun initDataTracker() {
+    }
+
+    override fun onEntityHit(entityHitResult: EntityHitResult) {
+        val item = itemStack?.item as? StatedItem ?: return
+
+        itemStack?.let { itemStack ->
+            (owner as? ServerPlayerEntity)?.let { player ->
+                val entity = entityHitResult.entity
+
+                if (entity is LivingEntity) {
+                    val items: MutableMap<ItemStack, StatedItem> = mutableMapOf()
+
+                    items[itemStack] = item
+                    items.putAll(DamageManager.getArmor(player))
+
+                    DamageManager.onPlayerAttackLivingEntity(player, entity, items)
+
+                    this.discard()
+                }
+            }
+        }
+    }
+
+    override fun canHit(entity: Entity): Boolean {
+        val playerFlag = (this.owner as? PlayerEntity)?.let {
+            !entity.isInvulnerableTo(DamageSource.player(it))
+        } ?: true
+
+        val creativeFlag = (entity as? PlayerEntity)?.let {
+            !entity.isCreative
+        } ?: true
+
+        return super.canHit(entity) && entity !is PlayerEntity && !entity.isInvulnerable && !entity.isInvisible && creativeFlag && playerFlag
+    }
+
+    companion object {
+        val ARROW_PROJECTILE: EntityType<ArrowProjectile> = Registry.register(
+            Registry.ENTITY_TYPE,
+            Main.modId - "melee_projectile",
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, ::ArrowProjectile)
+                .trackRangeBlocks(4).trackedUpdateRate(10)
+                .dimensions(EntityType.ARROW.dimensions)
+                .disableSaving()
+                .build()
+        )
+
+        fun register() {
+
+        }
+    }
+}

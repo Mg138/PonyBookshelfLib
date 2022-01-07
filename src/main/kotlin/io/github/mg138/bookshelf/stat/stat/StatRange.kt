@@ -21,6 +21,24 @@ class StatRange(min: Double, max: Double) : Stat {
         }
     }
 
+    override fun modifier(mod: Double): Stat {
+        val m = mod.coerceAtLeast(0.0).coerceAtMost(1.0)
+
+        val min = if (this.min < 0) {
+            this.min * (2 - m)
+        } else {
+            this.min * m
+        }
+
+        val max = if (this.max < 0) {
+            this.max * (2 - m)
+        } else {
+            this.max * m
+        }
+
+        return StatRange(min, max)
+    }
+
     override fun round(): Stat {
         return StatRange(
             this.min.roundToInt().toDouble(),

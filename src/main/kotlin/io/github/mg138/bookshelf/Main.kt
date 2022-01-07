@@ -10,8 +10,9 @@ import io.github.mg138.bookshelf.effect.Bleeding
 import io.github.mg138.bookshelf.effect.Burning
 import io.github.mg138.bookshelf.entity.impl.DummyEntity
 import io.github.mg138.bookshelf.item.test.FabricItem
-import io.github.mg138.bookshelf.stat.type.Preset
-import io.github.mg138.bookshelf.stat.type.StatTypeManager
+import io.github.mg138.bookshelf.projectile.ArrowProjectile
+import io.github.mg138.bookshelf.stat.type.StatType
+import io.github.mg138.bookshelf.stat.type.StatTypes
 import net.fabricmc.api.DedicatedServerModInitializer
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -26,7 +27,9 @@ object Main : DedicatedServerModInitializer {
 
     override fun onInitializeServer() {
         PolymerRPUtils.addAssetSource(modId)
-        Preset.types.forEach(StatTypeManager::register)
+
+        StatTypes.types.forEach(StatType::register)
+
         Bleeding.register()
         Burning.register()
 
@@ -39,6 +42,7 @@ object Main : DedicatedServerModInitializer {
             DummyEntity.register()
             logger.info("Entity test enabled.")
         }
+        ArrowProjectile.register()
 
         DamageIndicatorManager.register()
         DamageManager.register()

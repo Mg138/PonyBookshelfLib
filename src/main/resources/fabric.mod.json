@@ -25,6 +25,8 @@
   "mixins": [
     "pony_bookshelf.mixins.json"
   ],
+  "accessWidener": "pony_bookshelf.accesswidener",
+
   "depends": {
     "fabricloader": ">=0.12.5",
     "fabric": "*",
@@ -33,6 +35,5 @@
     "java": ">=16",
     "cloth-config": "*",
     "polymer": "*"
-  },
-  "accessWidener" : "pony_bookshelf.accesswidener"
+  }
 }

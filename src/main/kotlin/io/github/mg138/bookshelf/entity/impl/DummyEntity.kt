@@ -4,7 +4,7 @@ import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.entity.BookStaticStatedEntity
 import io.github.mg138.bookshelf.stat.data.StatMap
 import io.github.mg138.bookshelf.stat.stat.StatSingle
-import io.github.mg138.bookshelf.stat.type.Preset
+import io.github.mg138.bookshelf.stat.type.StatTypes
 import io.github.mg138.bookshelf.utils.minus
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
@@ -29,7 +29,7 @@ import kotlin.math.roundToInt
 
 class DummyEntity(type: EntityType<DummyEntity>, world: World) :
     BookStaticStatedEntity<DummyEntity>(type, world, StatMap().apply {
-        putStat(Preset.DefenseTypes.DEFENSE_AQUA, StatSingle(2000.0))
+        putStat(StatTypes.DefenseTypes.DEFENSE_AQUA, StatSingle(2000.0))
     }) {
     companion object {
         val map: MutableMap<PlayerEntity, Pair<Ref.IntRef, MutableList<Float>>> = mutableMapOf()
@@ -37,9 +37,7 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
         val DUMMY: EntityType<DummyEntity> = Registry.register(
             Registry.ENTITY_TYPE,
             Main.modId - "test_dummy_entity",
-            FabricEntityTypeBuilder.create(SpawnGroup.MISC) { type: EntityType<DummyEntity>, world ->
-                DummyEntity(type, world)
-            }
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, ::DummyEntity)
                 .dimensions(EntityType.VILLAGER.dimensions)
                 .disableSaving()
                 .build()

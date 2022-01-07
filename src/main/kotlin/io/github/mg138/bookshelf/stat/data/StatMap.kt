@@ -1,6 +1,7 @@
 package io.github.mg138.bookshelf.stat.data
 
 import io.github.mg138.bookshelf.stat.stat.Stat
+import io.github.mg138.bookshelf.stat.type.LoredStatType
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.bookshelf.stat.type.StatTypeManager
 import net.minecraft.util.Identifier
@@ -61,7 +62,8 @@ open class StatMap(
     override fun iterator() = this.pairs().iterator()
     override fun lores() = StatTypeManager.registeredTypes
         .filter { this.containsType(it) }
-        .map { it.name(this[it]!!) }
+        .filterIsInstance<LoredStatType>()
+        .map { it.lore(this[it]!!) }
 
 
     // MutableStated

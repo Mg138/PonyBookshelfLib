@@ -3,6 +3,7 @@ package io.github.mg138.bookshelf.stat.type.template
 import io.github.mg138.bookshelf.damage.DamageManager
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.utils.StatUtil
+import net.minecraft.entity.LivingEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 
@@ -18,9 +19,12 @@ abstract class ModifierType(id: Identifier) :
         override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
             if (condition(event)) {
                 val damagee = event.damagee
-                DamageManager[damagee]?.forEach { (type, other) ->
-                    if (type is DamageType) {
-                        DamageManager.queueDamage(damagee, type, StatUtil.damageModifier(other, event.stat))
+
+                if (damagee is LivingEntity) {
+                    DamageManager[damagee].forEach { (type, other) ->
+                        if (type is DamageType) {
+                            DamageManager.replaceDamage(damagee, type, StatUtil.damageModifier(other, event.stat))
+                        }
                     }
                 }
             }

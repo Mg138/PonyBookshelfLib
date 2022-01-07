@@ -1,49 +1,49 @@
 {
-    "entity.pony_bookshelf.test_dummy_entity": "Test Dummy",
+    "entity.pony_bookshelf.test_dummy_entity": "測試假人",
     "item.pony_bookshelf.fabric_item": "Fabric Item",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_tempus.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_tempus": " Tempest Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_tempus": " 暴風傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_tempus.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_aqua.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_aqua": " Water Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_aqua": " 流水傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_aqua.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_ignis.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_ignis": " Flame Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_ignis": " 烈焰傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_ignis.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_physical.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_physical": " Physical Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_physical": " 物理傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_physical.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_true.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_true": " True Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_true": " 真實傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_true.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_bleed.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_bleed": " Bleeding Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_bleed": " 流血傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_bleed.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_terra.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_terra": " Earth Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_terra": " 大地傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_terra.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_umbra.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_umbra": " Dark Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_umbra": " 黑暗傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_umbra.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_lumen.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_lumen": " Light Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_lumen": " 光明傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_lumen.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_none.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_none": "Unknown Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_none": "未知傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_none.indicator": "%s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder": "Thunder Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder": "雷霆傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.damage_thunder.indicator": "%s",
 
 
@@ -59,47 +59,47 @@
 
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_tempus.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_tempus": " Tempest Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_tempus": " 暴風防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_tempus.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_aqua.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_aqua": " Water Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_aqua": " 流水防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_aqua.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_ignis.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_ignis": " Flame Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_ignis": " 烈焰防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_ignis.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_physical.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_physical": " Physical Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_physical": " 物理防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_physical.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_true.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_true": " True Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_true": " 真實防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_true.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_bleed.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_bleed": " Bleeding Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_bleed": " 流血防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_bleed.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_terra.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_terra": " Earth Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_terra": " 大地防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_terra.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_umbra.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_umbra": " Dark Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_umbra": " 黑暗防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_umbra.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_lumen.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_lumen": " Light Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_lumen": " 光明防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_lumen.indicator": " %s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_none.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_none": "Unknown Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_none": "未知防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_none.indicator": "%s",
 
     "pony_bookshelf.stat_type.pony_bookshelf.defense_thunder.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.defense_thunder": "Thunder Defense: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.defense_thunder": "雷霆防禦: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.defense_thunder.indicator": "%s",
 
 
@@ -107,8 +107,9 @@
 
 
 
+
     "pony_bookshelf.stat_type.pony_bookshelf.modifier_overall.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.modifier_overall": "Overall Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.modifier_overall": "整體傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.modifier_overall.indicator": "%s",
 
 
@@ -116,9 +117,8 @@
 
 
 
-
     "pony_bookshelf.stat_type.pony_bookshelf.status_bleeding.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.status_bleeding": "Bleeding: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.status_bleeding": "流血: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.status_bleeding.indicator": "%s",
 
 
@@ -127,9 +127,8 @@
 
 
 
-
     "pony_bookshelf.stat_type.pony_bookshelf.power_critical.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.power_critical": "Critical Damage: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.power_critical": "爆擊傷害: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.power_critical.indicator": "%s",
 
 
@@ -137,6 +136,6 @@
 
 
     "pony_bookshelf.stat_type.pony_bookshelf.chance_critical.icon": "",
-    "pony_bookshelf.stat_type.pony_bookshelf.chance_critical": "Critical Chance: %s",
+    "pony_bookshelf.stat_type.pony_bookshelf.chance_critical": "爆擊機率: %s",
     "pony_bookshelf.stat_type.pony_bookshelf.chance_critical.indicator": "%s"
 }

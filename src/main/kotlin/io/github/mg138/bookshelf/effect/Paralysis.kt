@@ -3,7 +3,7 @@ package io.github.mg138.bookshelf.effect
 /*
 @Component
 class Paralysis : Effect {
-    override val id = "PARALYSIS"
+    override val identifier = "PARALYSIS"
 
     companion object {
         fun paralysisEffect(entity: LivingEntity, look: WrapperPlayServerEntityLook) {

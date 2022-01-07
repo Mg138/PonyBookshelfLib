@@ -14,6 +14,8 @@ interface Stat : Comparable<Stat> {
 
     fun round(): Stat
 
+    fun modifier(mod: Double): Stat
+
     operator fun plus(increment: Stat?): Stat
     operator fun minus(decrement: Stat?): Stat
 

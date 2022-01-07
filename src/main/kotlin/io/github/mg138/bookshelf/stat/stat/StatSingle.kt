@@ -9,6 +9,18 @@ class StatSingle(private val stat: Double) : Stat {
         return StatSingle(this.stat.roundToInt().toDouble())
     }
 
+    override fun modifier(mod: Double): Stat {
+        val m = mod.coerceAtLeast(0.0).coerceAtMost(1.0)
+
+        val stat = if (this.stat < 0) {
+            this.stat * (2 - m)
+        } else {
+            this.stat * m
+        }
+
+        return StatSingle(stat)
+    }
+
     override operator fun plus(increment: Stat?): StatSingle {
         if (increment == null) return this
 

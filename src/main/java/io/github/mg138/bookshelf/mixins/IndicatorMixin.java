@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ArmorStandEntity.class)
-public class IndicatorMixin {
+public abstract class IndicatorMixin {
     @Redirect(
             method = "travel",
             at = @At(

@@ -2,6 +2,7 @@ package io.github.mg138.bookshelf.command
 
 import com.mojang.brigadier.Command
 import com.mojang.brigadier.context.CommandContext
+import io.github.mg138.bookshelf.stat.type.LoredStatType
 import io.github.mg138.bookshelf.stat.type.StatTypeManager
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.minecraft.server.command.CommandManager.literal
@@ -14,14 +15,17 @@ object StatTypeCmd {
         val source = context.source
         source.sendFeedback(LiteralText("StatTypes:"), false)
 
-        StatTypeManager.registeredTypes.forEach { id ->
-            source.sendFeedback(
-                id.name()
-                    .append(" (Indicator: ")
-                    .append(id.indicator())
-                    .append(") "),
-                false
-            )
+        StatTypeManager.registeredTypes.forEach { type ->
+            if (type is LoredStatType) {
+                source.sendFeedback(
+                    type.name()
+                        .copy()
+                        .append(" (Indicator: ")
+                        .append(type.indicator())
+                        .append(") "),
+                    false
+                )
+            }
         }
 
         return Command.SINGLE_SUCCESS

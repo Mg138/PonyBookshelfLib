@@ -3,7 +3,7 @@ package io.github.mg138.bookshelf.effect
 /*
 @Component
 class FallResistance : FlagEffect() {
-    override val id = "FALL_RESISTANCE"
+    override val identifier = "FALL_RESISTANCE"
 
     class ActiveFallResistance(
         effect: Effect,

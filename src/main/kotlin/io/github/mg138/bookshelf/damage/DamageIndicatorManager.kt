@@ -1,6 +1,7 @@
 package io.github.mg138.bookshelf.damage
 
 import io.github.mg138.bookshelf.stat.stat.StatSingle
+import io.github.mg138.bookshelf.stat.type.LoredStatType
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.bookshelf.utils.EntityUtil.getDisplayPos
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
@@ -15,10 +16,10 @@ import kotlin.math.sin
 
 object DamageIndicatorManager {
     private val random = Random()
-    private val TWO_PI = Math.PI * 2.0
+    private const val TWO_PI = Math.PI * 2.0
 
     class Indicator(
-        damage: Double, type: StatType,
+        damage: Double, type: LoredStatType,
         world: World, x: Double, y: Double, z: Double
     ) : ArmorStandEntity(world, x, y, z) {
         init {
@@ -58,6 +59,8 @@ object DamageIndicatorManager {
     }
 
     fun displayDamage(damage: Double, type: StatType, entity: Entity) {
+        if (type !is LoredStatType) return
+
         val world = entity.world
         val pos = entity.getDisplayPos()
 

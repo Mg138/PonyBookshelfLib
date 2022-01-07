@@ -2,22 +2,14 @@ package io.github.mg138.bookshelf.stat.type
 
 import com.google.common.math.IntMath.pow
 import io.github.mg138.bookshelf.stat.stat.Stat
-import net.minecraft.text.LiteralText
-import net.minecraft.text.MutableText
-import net.minecraft.text.TextColor
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Identifier
 
 
 abstract class StatType(
     val id: Identifier
 ) {
-    var numberColor: TextColor = TextColor.fromRgb(0xFFFFFF)
-
-    constructor(id: Identifier, numberColor: TextColor?) : this(id) {
-        numberColor?.let {
-            this.numberColor = numberColor
-        }
+    fun register() {
+        StatTypeManager.register(this)
     }
 
     // Any
@@ -40,26 +32,4 @@ abstract class StatType(
 
         return (value * m).round() / m
     }
-
-    protected open fun valueToString(value: Stat, digitsAfterDecimal: Int) =
-        round(value, digitsAfterDecimal).toString()
-
-    protected open fun valueWithColor(value: Stat, digitsAfterDecimal: Int = 1): MutableText =
-        LiteralText(valueToString(value, digitsAfterDecimal))
-            .styled { it.withColor(numberColor) }
-
-    val translationKey = "pony_bookshelf.stat_type.${id.namespace}.${id.path}"
-    val iconKey = "$translationKey.icon"
-    val indicatorTranslationKey = "$translationKey.indicator"
-
-    open val loreKey = "pony_bookshelf.stat_type.lore.format"
-    open val icon = TranslatableText(iconKey)
-
-    open fun name(stat: Stat = Stat.EMPTY) = TranslatableText(
-        translationKey, icon, valueWithColor(stat)
-    )
-
-    open fun indicator(stat: Stat = Stat.EMPTY) = TranslatableText(
-        indicatorTranslationKey, icon, valueWithColor(stat)
-    )
 }
