@@ -29,23 +29,4 @@ public abstract class ServerPlayNetworkHandlerMixin {
             ((MeleeWeapon) item).onLeftClick(player, itemStack);
         }
     }
-
-    @Inject(
-            method = "onPlayerInteractEntity(Lnet/minecraft/network/packet/c2s/play/PlayerInteractEntityC2SPacket;)V",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/server/network/ServerPlayerEntity;setSneaking(Z)V"
-            ),
-            cancellable = true
-    )
-    public void pony_bookshelf_onPlayerInteractEntity(PlayerInteractEntityC2SPacket packet, CallbackInfo ci) {
-        ServerPlayNetworkHandler handler = (ServerPlayNetworkHandler) (Object) this;
-        ServerPlayerEntity player = handler.player;
-        ItemStack itemStack = player.getMainHandStack();
-        Item item = itemStack.getItem();
-
-        if (item instanceof BookItem) {
-            ci.cancel();
-        }
-    }
 }

@@ -295,11 +295,9 @@ object StatTypes {
             private val map: MutableMap<UUID, Pair<Long, Int>> = mutableMapOf()
 
             fun setDelay(damager: PlayerEntity, delay: Int) {
-                if (canDamage(damager)) {
-                    val time = damager.world.time
+                val time = damager.world.time
 
-                    map[damager.uuid] = time to delay
-                }
+                map[damager.uuid] = time to delay
             }
 
             fun canDamage(damager: PlayerEntity): Boolean {

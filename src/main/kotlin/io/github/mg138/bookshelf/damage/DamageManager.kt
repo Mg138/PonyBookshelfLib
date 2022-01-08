@@ -2,19 +2,25 @@ package io.github.mg138.bookshelf.damage
 
 import io.github.mg138.bookshelf.entity.BookStatedEntity
 import io.github.mg138.bookshelf.item.type.Armor
+import io.github.mg138.bookshelf.item.type.ProjectileThrower
 import io.github.mg138.bookshelf.item.type.StatedItem
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.player.data.ArmorManager
+import io.github.mg138.player.event.PlayerActionCallback
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback
+import net.fabricmc.fabric.api.event.player.UseEntityCallback
+import net.fabricmc.fabric.api.event.player.UseItemCallback
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.network.packet.s2c.play.CooldownUpdateS2CPacket
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
+import net.minecraft.util.TypedActionResult
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.world.World
 
@@ -75,7 +81,7 @@ object DamageManager {
             }
         }?.clear()
 
-        if (damagee != null ) {
+        if (damagee != null) {
             DamageEvent.AFTER_BOOK_DAMAGE.invoker().afterDamage(
                 DamageEvent.AfterBookDamageCallback.AfterBookDamageEvent(damager, damagee, items, damages)
             )
@@ -165,7 +171,26 @@ object DamageManager {
         return onPlayerAttack(damager, damagee, items)
     }
 
+    fun onPlayerUseItem(player: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
+        val itemStack = player.getStackInHand(hand)
+
+        if (player is ServerPlayerEntity) {
+            val item = itemStack.item
+
+            if (item is ProjectileThrower) {
+                item.onRightClick(player, itemStack)
+            }
+        }
+        return TypedActionResult.pass(itemStack)
+    }
+
     fun register() {
         AttackEntityCallback.EVENT.register(this::onPlayerAttack)
+        UseEntityCallback.EVENT.register { player, _, hand, _, _ ->
+            onPlayerUseItem(player, hand).result
+        }
+        UseItemCallback.EVENT.register { player, _, hand ->
+            onPlayerUseItem(player, hand)
+        }
     }
 }

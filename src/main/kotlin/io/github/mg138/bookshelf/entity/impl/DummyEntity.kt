@@ -21,7 +21,9 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.server.MinecraftServer
 import net.minecraft.text.LiteralText
+import net.minecraft.util.ActionResult
 import net.minecraft.util.Arm
+import net.minecraft.util.Hand
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 import kotlin.jvm.internal.Ref

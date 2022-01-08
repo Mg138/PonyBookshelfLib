@@ -7,6 +7,7 @@
   },
   "mixins": [
     "IndicatorMixin",
-    "ServerPlayNetworkHandlerMixin"
+    "ServerPlayNetworkHandlerMixin",
+    "ServerPlayNetworkHandlerSubclassMixin"
   ]
 }

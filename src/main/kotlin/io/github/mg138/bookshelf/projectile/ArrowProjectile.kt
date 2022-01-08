@@ -4,20 +4,20 @@ import eu.pb4.polymer.api.entity.PolymerEntity
 import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.damage.DamageManager
 import io.github.mg138.bookshelf.item.type.StatedItem
+import io.github.mg138.bookshelf.utils.EntityUtil.canHit
 import io.github.mg138.bookshelf.utils.minus
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.SpawnGroup
-import net.minecraft.entity.damage.DamageSource
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.entity.projectile.thrown.ThrownEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.registry.Registry
+import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.World
 
 class ArrowProjectile : ThrownEntity, PolymerEntity {
@@ -32,6 +32,13 @@ class ArrowProjectile : ThrownEntity, PolymerEntity {
     var itemStack: ItemStack? = null
 
     override fun initDataTracker() {
+    }
+
+    override fun tick() {
+        if (!world.getBlockState(blockPos).isAir) {
+            this.discard()
+        }
+        super.tick()
     }
 
     override fun onEntityHit(entityHitResult: EntityHitResult) {
@@ -56,15 +63,7 @@ class ArrowProjectile : ThrownEntity, PolymerEntity {
     }
 
     override fun canHit(entity: Entity): Boolean {
-        val playerFlag = (this.owner as? PlayerEntity)?.let {
-            !entity.isInvulnerableTo(DamageSource.player(it))
-        } ?: true
-
-        val creativeFlag = (entity as? PlayerEntity)?.let {
-            !entity.isCreative
-        } ?: true
-
-        return super.canHit(entity) && entity !is PlayerEntity && !entity.isInvulnerable && !entity.isInvisible && creativeFlag && playerFlag
+        return super.canHit(entity) && entity.canHit()
     }
 
     companion object {
