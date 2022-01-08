@@ -16,6 +16,6 @@ object EntityUtil {
             !this.isCreative
         } ?: true
 
-        return this !is PlayerEntity && !this.isInvulnerable && !this.isInvisible && creativeFlag
+        return this !is PlayerEntity && !this.isSpectator && this.isAlive && this.collides() && !this.isInvulnerable && !this.isInvisible && creativeFlag
     }
 }

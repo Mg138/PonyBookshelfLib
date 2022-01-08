@@ -21,12 +21,7 @@ interface SimpleMeleeWeapon : MeleeWeapon {
         if (this is StatedItem) {
             val start = player.getCameraPosVec(1.0F)
             val end = start.add(player.getRotationVec(1.0F).multiply(range))
-            val box = player.cameraEntity.boundingBox.expand(range)
 
-
-            val hitResult = ProjectileUtil.raycast(
-                player, start, end, box, { it.canHit() }, rangeSquared
-            )
             val blockResult = player.world.raycast(
                 RaycastContext(
                     start,
@@ -37,11 +32,25 @@ interface SimpleMeleeWeapon : MeleeWeapon {
                 )
             )
 
-            if (hitResult != null) {
-                if (blockResult.type != HitResult.Type.MISS) {
-                    if (hitResult.squaredDistanceTo(player) > blockResult.squaredDistanceTo(player)) return false
-                }
+            val cutRange = if (blockResult.type != HitResult.Type.MISS) {
+                blockResult.pos.squaredDistanceTo(player.pos)
+            } else {
+                range
+            }
 
+            val cutEnd = if (blockResult.type != HitResult.Type.MISS) {
+                start.add(player.getRotationVec(1.0F).multiply(cutRange))
+            } else {
+                end
+            }
+
+            val box = player.cameraEntity.boundingBox.stretch(cutEnd).expand(1.0)
+
+            val hitResult = ProjectileUtil.raycast(
+                player, start, cutEnd, box, { it.canHit() }, cutRange * cutRange
+            )
+
+            if (hitResult != null) {
                 val entity = hitResult.entity
 
                 if (entity is LivingEntity) {
