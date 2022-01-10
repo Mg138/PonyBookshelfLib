@@ -15,9 +15,9 @@ import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.entity.projectile.thrown.ThrownEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.registry.Registry
-import net.minecraft.util.shape.VoxelShape
 import net.minecraft.world.World
 
 class ArrowProjectile : ThrownEntity, PolymerEntity {
@@ -34,11 +34,8 @@ class ArrowProjectile : ThrownEntity, PolymerEntity {
     override fun initDataTracker() {
     }
 
-    override fun tick() {
-        if (!world.getBlockState(blockPos).isAir) {
-            this.discard()
-        }
-        super.tick()
+    override fun onBlockHit(blockHitResult: BlockHitResult?) {
+        this.discard()
     }
 
     override fun onEntityHit(entityHitResult: EntityHitResult) {
@@ -69,7 +66,7 @@ class ArrowProjectile : ThrownEntity, PolymerEntity {
     companion object {
         val ARROW_PROJECTILE: EntityType<ArrowProjectile> = Registry.register(
             Registry.ENTITY_TYPE,
-            Main.modId - "melee_projectile",
+            Main.modId - "arrow_projectile",
             FabricEntityTypeBuilder.create(SpawnGroup.MISC, ::ArrowProjectile)
                 .trackRangeBlocks(4).trackedUpdateRate(10)
                 .dimensions(EntityType.ARROW.dimensions)

@@ -1,12 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("fabric-loom")
     val kotlinVersion: String by System.getProperties()
     kotlin("jvm").version(kotlinVersion)
-
-    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 base {
     val archivesBaseName: String by project
@@ -79,11 +76,5 @@ tasks {
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
         withSourcesJar()
-    }
-}
-
-val shadowJar: ShadowJar by tasks
-shadowJar.apply {
-    dependencies {
     }
 }

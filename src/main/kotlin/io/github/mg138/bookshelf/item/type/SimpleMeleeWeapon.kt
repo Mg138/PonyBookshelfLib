@@ -12,9 +12,6 @@ import net.minecraft.world.RaycastContext
 interface SimpleMeleeWeapon : MeleeWeapon {
     val range: Double
 
-    private val rangeSquared: Double
-        get() = range * range
-
     override fun onLeftClick(player: ServerPlayerEntity, itemStack: ItemStack): Boolean {
         if (!super.onLeftClick(player, itemStack)) return false
 
@@ -26,7 +23,7 @@ interface SimpleMeleeWeapon : MeleeWeapon {
                 RaycastContext(
                     start,
                     end,
-                    RaycastContext.ShapeType.OUTLINE,
+                    RaycastContext.ShapeType.VISUAL,
                     RaycastContext.FluidHandling.NONE,
                     player
                 )
@@ -44,7 +41,7 @@ interface SimpleMeleeWeapon : MeleeWeapon {
                 end
             }
 
-            val box = player.cameraEntity.boundingBox.stretch(cutEnd).expand(1.0)
+            val box = player.cameraEntity.boundingBox.expand(cutRange)
 
             val hitResult = ProjectileUtil.raycast(
                 player, start, cutEnd, box, { it.canHit() }, cutRange * cutRange
