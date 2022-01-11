@@ -9,8 +9,6 @@ import net.minecraft.entity.projectile.thrown.ThrownEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
-import net.minecraft.util.math.Box
-import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
@@ -41,6 +39,7 @@ class LongWandProjectile : ThrownEntity {
         WandProjectile.onEntityHit(itemStack, owner, map, entityHitResult)
     }
 
+
     override fun canHit(entity: Entity): Boolean {
         return super.canHit(entity) && entity.canHit()
     }
@@ -48,10 +47,6 @@ class LongWandProjectile : ThrownEntity {
     override fun getGravity() = WandProjectile.GRAVITY
 
     override fun shouldRender(distance: Double) = false
-
-    init {
-        this.boundingBox = Box.of(Vec3d.ZERO, 5.0, 5.0, 5.0)
-    }
 
     companion object {
         val LONG_WAND_PROJECTILE: EntityType<LongWandProjectile> = Registry.register(

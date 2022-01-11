@@ -1,14 +1,24 @@
 package io.github.mg138.bookshelf.damage
 
+import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.LoredStatType
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.bookshelf.utils.EntityUtil.getDisplayPos
+import io.github.mg138.bookshelf.utils.minus
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.entity.Entity
+import net.minecraft.entity.EntityDimensions
+import net.minecraft.entity.EntityType
+import net.minecraft.entity.SpawnGroup
 import net.minecraft.entity.decoration.ArmorStandEntity
+import net.minecraft.entity.mob.MobEntity.createMobAttributes
+import net.minecraft.text.LiteralText
 import net.minecraft.util.math.Vec3d
+import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 import java.util.*
 import kotlin.math.cos
@@ -18,10 +28,30 @@ object DamageIndicatorManager {
     private val random = Random()
     private const val TWO_PI = Math.PI * 2.0
 
-    class Indicator(
-        damage: Double, type: LoredStatType,
-        world: World, x: Double, y: Double, z: Double
-    ) : ArmorStandEntity(world, x, y, z) {
+    private val indicators: MutableList<Indicator> = mutableListOf()
+
+    val INDICATOR: EntityType<Indicator> = Registry.register(
+        Registry.ENTITY_TYPE,
+        Main.modId - "indicator",
+        FabricEntityTypeBuilder.create(SpawnGroup.MISC, ::Indicator)
+            .dimensions(EntityDimensions.fixed(0.0F, 0.0F))
+            .disableSaving()
+            .build()
+    )
+
+    class Indicator : ArmorStandEntity {
+        constructor(
+            entityType: EntityType<Indicator>, world: World
+        ) : super(entityType, world) {
+            customName = LiteralText.EMPTY
+        }
+
+        constructor(
+            damage: Double, type: LoredStatType, world: World
+        ) : super(INDICATOR, world) {
+            customName = type.indicator(StatSingle(damage))
+        }
+
         init {
             isMarker = true
             noClip = true
@@ -29,15 +59,13 @@ object DamageIndicatorManager {
             isInvulnerable = true
             isCustomNameVisible = true
 
-            customName = type.indicator(StatSingle(damage))
-
             setNoGravity(true)
         }
     }
 
-    private val indicators: MutableList<Indicator> = mutableListOf()
-
     fun register() {
+        FabricDefaultAttributeRegistry.register(INDICATOR, createMobAttributes())
+
         ServerLifecycleEvents.SERVER_STOPPING.register {
             if (indicators.isNotEmpty()) {
                 indicators.forEach { it.kill() }
@@ -75,7 +103,8 @@ object DamageIndicatorManager {
         val yV = 0.15
         val zV = sin(rZ) / 6.0
 
-        val indicator = Indicator(damage, type, world, x, y, z)
+        val indicator = Indicator(damage, type, world)
+        indicator.teleport(x, y, z)
         indicator.velocity = Vec3d(xV, yV, zV)
         indicators += indicator
 

@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
+import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
@@ -32,6 +33,10 @@ class ArrowProjectile : ThrownEntity, PolymerEntity {
     var itemStack: ItemStack? = null
 
     override fun initDataTracker() {
+    }
+
+    override fun setVelocity(velocity: Vec3d) {
+        super.setVelocity(velocity)
     }
 
     override fun onBlockHit(blockHitResult: BlockHitResult?) {

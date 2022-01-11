@@ -14,7 +14,6 @@ import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
-import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
@@ -54,12 +53,9 @@ class WandProjectile : ThrownEntity {
 
     override fun shouldRender(distance: Double) = false
 
-    init {
-        this.boundingBox = Box.of(Vec3d.ZERO, 2.4, 2.4, 2.4)
-    }
-
     companion object {
         private const val DELAY = 3
+
         const val GRAVITY = 0.1F
 
         fun spawnParticles(entity: Entity) {

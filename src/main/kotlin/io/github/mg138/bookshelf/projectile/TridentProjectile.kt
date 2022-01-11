@@ -9,8 +9,6 @@ import net.minecraft.entity.projectile.thrown.ThrownEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
-import net.minecraft.util.math.Box
-import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
 
@@ -48,10 +46,6 @@ class TridentProjectile : ThrownEntity {
     override fun getGravity() = WandProjectile.GRAVITY
 
     override fun shouldRender(distance: Double) = false
-
-    init {
-        this.boundingBox = Box.of(Vec3d.ZERO, 1.7, 1.7, 1.7)
-    }
 
     companion object {
         val TRIDENT_PROJECTILE: EntityType<TridentProjectile> = Registry.register(
