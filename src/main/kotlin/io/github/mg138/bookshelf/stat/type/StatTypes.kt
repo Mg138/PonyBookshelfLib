@@ -224,7 +224,7 @@ object StatTypes {
 
                     DamageManager[damagee].forEach { (type, other) ->
                         if (type is DamageType) {
-                            DamageManager.replaceDamage(damagee, type, other.modifier(p))
+                            DamageManager.replaceDamage(damagee, type, other.modifier(1 + p))
                         }
                     }
 
