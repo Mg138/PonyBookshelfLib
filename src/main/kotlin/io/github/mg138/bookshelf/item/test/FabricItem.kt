@@ -23,13 +23,13 @@ object FabricItem : SimpleBookStaticStatedItem(
     BookItemSettings(true),
     FabricItemSettings(), Items.PAPER,
     StatMap().apply {
-        putStat(StatTypes.DamageTypes.DAMAGE_AQUA, StatSingle(10000.0))
-        putStat(StatTypes.DamageTypes.DAMAGE_LUMEN, StatRange(10000.0, 1000000.0))
-        putStat(StatTypes.DamageTypes.DAMAGE_IGNIS, StatSingle(10000.0))
-        putStat(StatTypes.DamageTypes.DAMAGE_TERRA, StatSingle(10000.0))
-        putStat(StatTypes.DamageTypes.DAMAGE_TEMPUS, StatSingle(10000.0))
-        putStat(StatTypes.ChanceTypes.CHANCE_CRITICAL, StatSingle(2.0))
-        putStat(StatTypes.PowerTypes.POWER_CRITICAL, StatSingle(2.0))
+        putStat(StatTypes.DamageTypes.DamageAqua, StatSingle(10000.0))
+        putStat(StatTypes.DamageTypes.DamageLumen, StatRange(10000.0, 1000000.0))
+        putStat(StatTypes.DamageTypes.DamageIgnis, StatSingle(10000.0))
+        putStat(StatTypes.DamageTypes.DamageTerra, StatSingle(10000.0))
+        putStat(StatTypes.DamageTypes.DamageTempus, StatSingle(10000.0))
+        putStat(StatTypes.ChanceTypes.ChanceCritical, StatSingle(2.0))
+        putStat(StatTypes.PowerTypes.PowerCritical, StatSingle(2.0))
     }
 ), SimpleMeleeWeapon {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {

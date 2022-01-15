@@ -16,10 +16,13 @@ object StatUtil {
             .toList()
     }
 
-
-    inline fun <T> Iterable<T>.sumOf(function: (T) -> Stat?) =
-        this.map { function(it) }
-            .reduce { a, b -> a?.plus(b) }
+    fun mod(n: Double, mod: Double): Double {
+        return if (n < 0) {
+            n * (1 - mod)
+        } else {
+            n + (n * mod)
+        }
+    }
 
     private fun percent(m: Double, k: Int) = max(m / (m + k), 0.0)
 

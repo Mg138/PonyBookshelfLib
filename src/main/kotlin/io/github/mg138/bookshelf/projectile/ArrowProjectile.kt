@@ -80,7 +80,6 @@ class ArrowProjectile : ThrownEntity, PolymerEntity {
         )
 
         fun register() {
-
         }
     }
 }

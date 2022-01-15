@@ -11,9 +11,9 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 
 class Burning : DamagingEffect(
-    StatTypes.DamageTypes.DAMAGE_IGNIS_COLOR,
+    StatTypes.DamageTypes.DamageIgnis.DAMAGE_IGNIS_COLOR,
     10,
-    StatTypes.DamageTypes.DAMAGE_IGNIS
+    StatTypes.DamageTypes.DamageIgnis
 ) {
     override fun visualEffect(entity: LivingEntity, amplifier: Int) {
         val pos = entity.pos.add(0.0, 1.0, 0.0)

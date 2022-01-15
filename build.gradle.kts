@@ -26,6 +26,7 @@ loom {
 repositories {
     maven("https://maven.shedaniel.me/")
     maven("https://maven.nucleoid.xyz")
+    maven("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
     mavenCentral()
 }
 
@@ -50,6 +51,8 @@ dependencies {
 
     val polymerVersion: String by project
     modImplementation("eu.pb4:polymer:$polymerVersion")
+
+    //modImplementation("software.bernie.geckolib:geckolib-fabric-1.18:3.0.24")
 
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }

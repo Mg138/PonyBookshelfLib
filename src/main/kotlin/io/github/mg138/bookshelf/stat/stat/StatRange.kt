@@ -1,5 +1,6 @@
 package io.github.mg138.bookshelf.stat.stat
 
+import io.github.mg138.bookshelf.utils.StatUtil
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -22,21 +23,7 @@ class StatRange(min: Double, max: Double) : Stat {
     }
 
     override fun modifier(mod: Double): Stat {
-        val m = mod.coerceAtLeast(0.0).coerceAtMost(1.0)
-
-        val min = if (this.min < 0) {
-            this.min * (2 - m)
-        } else {
-            this.min * m
-        }
-
-        val max = if (this.max < 0) {
-            this.max * (2 - m)
-        } else {
-            this.max * m
-        }
-
-        return StatRange(min, max)
+        return StatRange(StatUtil.mod(min, mod), StatUtil.mod(max, mod))
     }
 
     override fun round(): Stat {

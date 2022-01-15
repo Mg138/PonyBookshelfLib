@@ -11,5 +11,5 @@ abstract class SimpleBookStaticStatedItem(
     settings: Settings, vanillaItem: Item,
     private val statMap: StatMap
 ) : SimpleBookStatedItem(id, bookItemSettings, settings, vanillaItem) {
-    override fun getStatMap(itemStack: ItemStack?) = statMap
+    override fun getStats(itemStack: ItemStack?) = statMap
 }

@@ -10,7 +10,6 @@ import io.github.mg138.bookshelf.utils.ObjectUtil
 import io.github.mg138.bookshelf.utils.ParticleUtil.spawnParticles
 import io.github.mg138.bookshelf.utils.StatUtil
 import io.github.mg138.bookshelf.utils.minus
-import net.minecraft.entity.EntityGroup
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.player.PlayerEntity
@@ -25,164 +24,155 @@ import kotlin.math.abs
 @Suppress("UNUSED")
 object StatTypes {
     object DamageTypes {
-        val DAMAGE_TRUE =
-            object : DamageType(Main.modId - "damage_true") {}
+        object DamageTrue : DamageType(Main.modId - "damage_true")
 
-        const val DAMAGE_PHYSICAL_COLOR = 0xf5ab3d
-        val DAMAGE_PHYSICAL =
-            object : DamageType(Main.modId - "damage_physical") {
-                init {
-                    color = TextColor.fromRgb(DAMAGE_PHYSICAL_COLOR)
-                }
-            }
+        object DamagePhysical : DamageType(Main.modId - "damage_physical") {
+            const val DAMAGE_PHYSICAL_COLOR = 0xf5ab3d
 
-        const val DAMAGE_TERRA_COLOR = 0x7bb651
-        val DAMAGE_TERRA =
-            object : DamageType(Main.modId - "damage_terra") {
-                init {
-                    color = TextColor.fromRgb(DAMAGE_TERRA_COLOR)
-                }
+            init {
+                color = TextColor.fromRgb(DAMAGE_PHYSICAL_COLOR)
             }
-        const val DAMAGE_TEMPUS_COLOR = 0xffe494
-        val DAMAGE_TEMPUS =
-            object : DamageType(Main.modId - "damage_tempus") {
-                init {
-                    color = TextColor.fromRgb(DAMAGE_TEMPUS_COLOR)
-                }
-            }
+        }
 
-        const val DAMAGE_IGNIS_COLOR = 0xf8822f
-        val DAMAGE_IGNIS =
-            object : DamageType(Main.modId - "damage_ignis") {
-                init {
-                    color = TextColor.fromRgb(DAMAGE_IGNIS_COLOR)
-                }
-            }
+        object DamageTerra : DamageType(Main.modId - "damage_terra") {
+            const val DAMAGE_TERRA_COLOR = 0x7bb651
 
-        const val DAMAGE_AQUA_COLOR = 0x7291ff
-        val DAMAGE_AQUA =
-            object : DamageType(Main.modId - "damage_aqua") {
-                init {
-                    color = TextColor.fromRgb(DAMAGE_AQUA_COLOR)
-                }
+            init {
+                color = TextColor.fromRgb(DAMAGE_TERRA_COLOR)
             }
+        }
 
-        const val DAMAGE_LUMEN_COLOR = 0xfff46e
-        val DAMAGE_LUMEN =
-            object : DamageType(Main.modId - "damage_lumen") {
-                init {
-                    color = TextColor.fromRgb(DAMAGE_LUMEN_COLOR)
-                }
+        object DamageTempus : DamageType(Main.modId - "damage_tempus") {
+            const val DAMAGE_TEMPUS_COLOR = 0xffe494
+
+            init {
+                color = TextColor.fromRgb(DAMAGE_TEMPUS_COLOR)
             }
+        }
 
-        const val DAMAGE_UMBRA_COLOR = 0x5e5e5e
-        val DAMAGE_UMBRA =
-            object : DamageType(Main.modId - "damage_umbra") {
-                init {
-                    color = TextColor.fromRgb(DAMAGE_UMBRA_COLOR)
-                }
+        object DamageIgnis : DamageType(Main.modId - "damage_ignis") {
+            const val DAMAGE_IGNIS_COLOR = 0xf8822f
+
+            init {
+                color = TextColor.fromRgb(DAMAGE_IGNIS_COLOR)
             }
+        }
 
-        const val DAMAGE_NONE_COLOR = 0xa0a0a0
-        val DAMAGE_NONE =
-            object : DamageType(Main.modId - "damage_none") {
-                init {
-                    color = TextColor.fromRgb(DAMAGE_NONE_COLOR)
-                }
+        object DamageAqua : DamageType(Main.modId - "damage_aqua") {
+            const val DAMAGE_AQUA_COLOR = 0x7291ff
+
+            init {
+                color = TextColor.fromRgb(DAMAGE_AQUA_COLOR)
             }
+        }
 
-        const val DAMAGE_BLEED_COLOR = 0xff7474
-        val DAMAGE_BLEED =
-            object : DamageType(Main.modId - "damage_bleed") {
-                init {
-                    color = TextColor.fromRgb(DAMAGE_BLEED_COLOR)
-                }
+        object DamageLumen : DamageType(Main.modId - "damage_lumen") {
+            const val DAMAGE_LUMEN_COLOR = 0xfff46e
+
+            init {
+                color = TextColor.fromRgb(DAMAGE_LUMEN_COLOR)
             }
+        }
 
-        val DAMAGE_THUNDER =
-            object : DamageType(Main.modId - "damage_thunder") {}
+        object DamageUmbra : DamageType(Main.modId - "damage_umbra") {
+            const val DAMAGE_UMBRA_COLOR = 0x5e5e5e
+
+            init {
+                color = TextColor.fromRgb(DAMAGE_UMBRA_COLOR)
+            }
+        }
+
+        object DamageNone : DamageType(Main.modId - "damage_none") {
+            const val DAMAGE_NONE_COLOR = 0xa0a0a0
+
+            init {
+                color = TextColor.fromRgb(DAMAGE_NONE_COLOR)
+            }
+        }
+
+        object DamageBleed : DamageType(Main.modId - "damage_bleed") {
+            const val DAMAGE_BLEED_COLOR = 0xff7474
+
+            init {
+                color = TextColor.fromRgb(DAMAGE_BLEED_COLOR)
+            }
+        }
+
+        object DamageThunder : DamageType(Main.modId - "damage_thunder")
 
         val types = ObjectUtil.getFieldsOfObject<DamageType, DamageTypes>()
     }
 
     object DefenseTypes {
-        val DEFENSE_TRUE =
-            object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_true", DamageTypes.DAMAGE_TRUE) {
-                override fun act(damage: Stat, defense: Stat) =
-                    StatUtil.calculateTrueDamage(damage, defense)
-            }
+        object DefenseTrue : DefenseType.DefenseTypeTemplate(Main.modId - "defense_true", DamageTypes.DamageTrue) {
+            override fun act(damage: Stat, defense: Stat) =
+                StatUtil.calculateTrueDamage(damage, defense)
+        }
 
-        val DEFENSE_PHYSICAL =
-            object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_physical", DamageTypes.DAMAGE_PHYSICAL) {}
+        object DefensePhysical :
+            DefenseType.DefenseTypeTemplate(Main.modId - "defense_physical", DamageTypes.DamagePhysical)
 
-        val DEFENSE_TERRA =
-            object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_terra", DamageTypes.DAMAGE_TERRA) {}
+        object DefenseTerra :
+            DefenseType.DefenseTypeTemplate(Main.modId - "defense_terra", DamageTypes.DamageTerra)
 
-        val DEFENSE_TEMPUS =
-            object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_tempus", DamageTypes.DAMAGE_TEMPUS) {}
+        object DefenseTempus :
+            DefenseType.DefenseTypeTemplate(Main.modId - "defense_tempus", DamageTypes.DamageTempus)
 
-        val DEFENSE_IGNIS =
-            object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_ignis", DamageTypes.DAMAGE_IGNIS) {}
+        object DefenseIgnis :
+            DefenseType.DefenseTypeTemplate(Main.modId - "defense_ignis", DamageTypes.DamageIgnis)
 
-        val DEFENSE_AQUA =
-            object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_aqua", DamageTypes.DAMAGE_AQUA) {}
+        object DefenseAqua :
+            DefenseType.DefenseTypeTemplate(Main.modId - "defense_aqua", DamageTypes.DamageAqua)
 
-        val DEFENSE_LUMEN =
-            object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_lumen", DamageTypes.DAMAGE_LUMEN) {}
+        object DefenseLumen :
+            DefenseType.DefenseTypeTemplate(Main.modId - "defense_lumen", DamageTypes.DamageLumen)
 
-        val DEFENSE_UMBRA =
-            object : DefenseType.DefenseTypeTemplate(Main.modId - "defense_umbra", DamageTypes.DAMAGE_UMBRA) {}
+        object DefenseUmbra :
+            DefenseType.DefenseTypeTemplate(Main.modId - "defense_umbra", DamageTypes.DamageUmbra)
 
         val types = ObjectUtil.getFieldsOfObject<DefenseType, DefenseTypes>()
     }
 
     object ModifierTypes {
-        val MODIFIER_ARTHROPOD =
-            object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_arthropod") {
-                override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
-                    event.damagee?.group == EntityGroup.ARTHROPOD
-            }
+        object ModifierOverall : ModifierType.StatTypeModifierTemplate(Main.modId - "modifier_overall") {
+            override fun condition(type: StatType) = true
+        }
 
-        val MODIFIER_UNDEAD =
-            object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_undead") {
-                override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
-                    event.damagee?.group == EntityGroup.UNDEAD
-            }
+        object ModifierPhysical : ModifierType.StatTypeModifierTemplate(Main.modId - "modifier_physical") {
+            override fun condition(type: StatType) = type is DamageTypes.DamagePhysical
+        }
 
-        val MODIFIER_UNDERWATER =
-            object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_underwater") {
-                override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
-                    event.damagee?.group == EntityGroup.AQUATIC
-            }
+        object ModifierTerra : ModifierType.StatTypeModifierTemplate(Main.modId - "modifier_terra") {
+            override fun condition(type: StatType) = type is DamageTypes.DamageTerra
+        }
 
-        val MODIFIER_PLAYER =
-            object : ModifierType.ModifierTypeTemplate(Main.modId - "modifier_player") {
-                override fun condition(event: StatEvent.OnDamageCallback.OnDamageEvent) =
-                    event.damagee is PlayerEntity
-            }
+        object ModifierTempus : ModifierType.StatTypeModifierTemplate(Main.modId - "modifier_tempus") {
+            override fun condition(type: StatType) = type is DamageTypes.DamageTempus
+        }
 
-        val MODIFIER_OVERALL =
-            object : ModifierType(Main.modId - "modifier_overall") {
-                override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
-                    val damagee = event.damagee
+        object ModifierIgnis : ModifierType.StatTypeModifierTemplate(Main.modId - "modifier_ignis") {
+            override fun condition(type: StatType) = type is DamageTypes.DamageIgnis
+        }
 
-                    if (damagee is LivingEntity) {
-                        DamageManager[damagee].forEach { (type, other) ->
-                            if (type is DamageType) {
-                                DamageManager.replaceDamage(damagee, type, other.modifier(1.0 - event.stat.result()))
-                            }
-                        }
-                    }
-                    return ActionResult.PASS
-                }
-            }
+        object ModifierAqua : ModifierType.StatTypeModifierTemplate(Main.modId - "modifier_aqua") {
+            override fun condition(type: StatType) = type is DamageTypes.DamageAqua
+        }
+
+        object ModifierLumen : ModifierType.StatTypeModifierTemplate(Main.modId - "modifier_lumen") {
+            override fun condition(type: StatType) = type is DamageTypes.DamageLumen
+        }
+
+        object ModifierUmbra : ModifierType.StatTypeModifierTemplate(Main.modId - "modifier_umbra") {
+            override fun condition(type: StatType) = type is DamageTypes.DamageUmbra
+        }
 
 
         val types = ObjectUtil.getFieldsOfObject<ModifierType, ModifierTypes>()
     }
 
+
     object StatusTypes {
-        val STATUS_BLEEDING = object : StatusType(Main.modId - "status_bleeding", { event ->
+        object StatusBleeding : StatusType(Main.modId - "status_bleeding", { event ->
             StatusEffectInstance(
                 Bleeding.BLEEDING,
                 80,
@@ -190,14 +180,13 @@ object StatTypes {
                 true,
                 false
             )
-        }) {
-        }
+        })
 
         val types = ObjectUtil.getFieldsOfObject<StatusType, StatusTypes>()
     }
 
     object PowerTypes {
-        class PowerCritical : PowerType(Main.modId - "power_critical") {
+        object PowerCritical : PowerType(Main.modId - "power_critical") {
             fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
                 val damagee = event.damagee
 
@@ -221,9 +210,7 @@ object StatTypes {
             }
         }
 
-        val POWER_CRITICAL = PowerCritical()
-
-        class PowerDrain : PowerType(Main.modId - "power_drain") {
+        object PowerDrain : PowerType(Main.modId - "power_drain") {
             fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
                 val damager = event.damager
                 val damagee = event.damagee
@@ -240,9 +227,6 @@ object StatTypes {
             }
         }
 
-        val POWER_DRAIN = PowerDrain()
-
-
         //val POWER_SLOWNESS =
         //    object : PowerType("power_slowness") {
         //        override fun onDamage(power: Double, event: BookStatEvent) {
@@ -256,33 +240,32 @@ object StatTypes {
         //            )
         //        }
         //    }
+
         val types = ObjectUtil.getFieldsOfObject<PowerType, PowerTypes>()
     }
 
     object ChanceTypes {
-        val CHANCE_CRITICAL: ChanceType =
-            object : ChanceType(Main.modId - "chance_critical"), StatEvent.OnDamageCallback {
-                override val onDamagePriority = 1000
+        object ChanceCritical : ChanceType(Main.modId - "chance_critical"), StatEvent.OnDamageCallback {
+            override val onDamagePriority = 1000
 
-                override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
-                    val power = event.stats.getStat(PowerTypes.POWER_CRITICAL) ?: return ActionResult.PASS
-                    val p = calculate(event.stat, power)
+            override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
+                val power = event.stats.getStat(PowerTypes.PowerCritical) ?: return ActionResult.PASS
+                val p = calculate(event.stat, power)
 
-                    return PowerTypes.POWER_CRITICAL.onDamage(event.copy(stat = p))
-                }
+                return PowerTypes.PowerCritical.onDamage(event.copy(stat = p))
             }
+        }
 
-        val CHANCE_DRAIN: ChanceType =
-            object : ChanceType(Main.modId - "chance_drain"), StatEvent.AfterDamageCallback {
-                override val afterDamagePriority = 1000
+        object ChanceDrain : ChanceType(Main.modId - "chance_drain"), StatEvent.AfterDamageCallback {
+            override val afterDamagePriority = 1000
 
-                override fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
-                    val power = event.stats.getStat(PowerTypes.POWER_DRAIN) ?: return ActionResult.PASS
-                    val p = calculate(event.stat, power)
+            override fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
+                val power = event.stats.getStat(PowerTypes.PowerDrain) ?: return ActionResult.PASS
+                val p = calculate(event.stat, power)
 
-                    return PowerTypes.POWER_DRAIN.afterDamage(event.copy(stat = p))
-                }
+                return PowerTypes.PowerDrain.afterDamage(event.copy(stat = p))
             }
+        }
 
         //val CHANCE_SLOWNESS =
         //    object : ChanceType.ChanceTypeTemplate("chance_slowness", PowerTypes.POWER_SLOWNESS) {}
@@ -291,7 +274,7 @@ object StatTypes {
     }
 
     object MiscTypes {
-        class AttackDelay : StatType(Main.modId - "attack_delay") {
+        object AttackDelay : StatType(Main.modId - "attack_delay") {
             private val map: MutableMap<UUID, Pair<Long, Int>> = mutableMapOf()
 
             fun setDelay(damager: PlayerEntity, delay: Int) {
@@ -309,9 +292,6 @@ object StatTypes {
                 } ?: true
             }
         }
-
-        val ATTACK_DELAY = AttackDelay()
-
 
         val types = ObjectUtil.getFieldsOfObject<StatType, MiscTypes>()
     }

@@ -1,5 +1,6 @@
 package io.github.mg138.bookshelf.stat.stat
 
+import io.github.mg138.bookshelf.utils.StatUtil
 import kotlin.math.roundToInt
 
 class StatSingle(private val stat: Double) : Stat {
@@ -10,15 +11,7 @@ class StatSingle(private val stat: Double) : Stat {
     }
 
     override fun modifier(mod: Double): Stat {
-        val m = mod.coerceAtLeast(0.0).coerceAtMost(1.0)
-
-        val stat = if (this.stat < 0) {
-            this.stat * (2 - m)
-        } else {
-            this.stat * m
-        }
-
-        return StatSingle(stat)
+        return StatSingle(StatUtil.mod(stat, mod))
     }
 
     override operator fun plus(increment: Stat?): StatSingle {

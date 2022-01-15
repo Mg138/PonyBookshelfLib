@@ -13,9 +13,9 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.util.registry.Registry
 
 class Bleeding : DamagingEffect(
-    StatTypes.DamageTypes.DAMAGE_BLEED_COLOR,
+    StatTypes.DamageTypes.DamageBleed.DAMAGE_BLEED_COLOR,
     20,
-    StatTypes.DamageTypes.DAMAGE_BLEED
+    StatTypes.DamageTypes.DamageBleed
 ) {
     override fun visualEffect(entity: LivingEntity, amplifier: Int) {
         val pos = entity.pos.add(0.0, 1.0, 0.0)

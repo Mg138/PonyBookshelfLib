@@ -9,12 +9,12 @@ import net.minecraft.server.network.ServerPlayerEntity
 interface Weapon {
     fun checkDelay(player: ServerPlayerEntity, itemStack: ItemStack): Boolean {
         if (this is StatedItem) {
-            val canDamage = StatTypes.MiscTypes.ATTACK_DELAY.canDamage(player)
+            val canDamage = StatTypes.MiscTypes.AttackDelay.canDamage(player)
 
             if (canDamage) {
-                this.getStat(StatTypes.MiscTypes.ATTACK_DELAY, itemStack)?.let {
+                this.getStat(StatTypes.MiscTypes.AttackDelay, itemStack)?.let {
                     val delay = it.result().toInt()
-                    StatTypes.MiscTypes.ATTACK_DELAY.setDelay(player, delay)
+                    StatTypes.MiscTypes.AttackDelay.setDelay(player, delay)
 
                     if (this is PolymerItem) {
                         player.networkHandler.sendPacket(
