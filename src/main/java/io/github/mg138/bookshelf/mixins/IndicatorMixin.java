@@ -1,9 +1,7 @@
 package io.github.mg138.bookshelf.mixins;
 
 import io.github.mg138.bookshelf.damage.DamageIndicatorManager;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;

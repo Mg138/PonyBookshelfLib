@@ -7,7 +7,6 @@ import io.github.mg138.bookshelf.item.type.StatedItem
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.player.data.ArmorManager
-import io.github.mg138.player.event.PlayerActionCallback
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.fabricmc.fabric.api.event.player.UseItemCallback
@@ -16,7 +15,6 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.network.packet.s2c.play.CooldownUpdateS2CPacket
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand

@@ -1,11 +1,9 @@
 package io.github.mg138.bookshelf.mixins;
 
-import io.github.mg138.bookshelf.item.BookItem;
 import io.github.mg138.bookshelf.item.type.MeleeWeapon;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.HandSwingC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;

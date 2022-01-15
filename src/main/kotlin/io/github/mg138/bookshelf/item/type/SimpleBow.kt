@@ -1,12 +1,8 @@
 package io.github.mg138.bookshelf.item.type
 
 import io.github.mg138.bookshelf.projectile.ArrowProjectile
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.Hand
-import net.minecraft.util.TypedActionResult
-import net.minecraft.world.World
 
 interface SimpleBow : ProjectileThrower {
     val speed: Double

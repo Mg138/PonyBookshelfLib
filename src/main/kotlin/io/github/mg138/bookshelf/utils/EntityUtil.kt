@@ -1,7 +1,6 @@
 package io.github.mg138.bookshelf.utils
 
 import net.minecraft.entity.Entity
-import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.Vec3d
 
