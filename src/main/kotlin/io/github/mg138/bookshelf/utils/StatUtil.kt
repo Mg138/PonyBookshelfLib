@@ -16,14 +16,6 @@ object StatUtil {
             .toList()
     }
 
-    fun mod(n: Double, mod: Double): Double {
-        return if (n < 0) {
-            n * (1 - mod)
-        } else {
-            n + (n * mod)
-        }
-    }
-
     private fun percent(m: Double, k: Int) = max(m / (m + k), 0.0)
 
     private fun positivePercent(m: Double, k: Int) = 1 + percent(m, k)
@@ -37,17 +29,19 @@ object StatUtil {
      * - modifier < 0: stat gets smaller, but limited at 0 (never goes under 0)
      * - modifier = 0: ignored
      */
-    private fun positiveModifier(
+    fun positiveModifier(
         stat: Stat,
         modifier: Double,
-        constant: Int,
+        constant: Int = 1,
         ignoreNegative: Boolean = false
     ): Stat {
         if (modifier > 0.0) return stat * modifier
 
-        if (modifier == 0.0 || ignoreNegative) return stat
+        if (modifier < 0.0) {
+            if (!ignoreNegative) return stat * negativePercent(-modifier, constant)
+        }
 
-        return stat * negativePercent(modifier, constant)
+        return stat
     }
 
     /**
@@ -60,14 +54,16 @@ object StatUtil {
     private fun negativeModifier(
         stat: Stat,
         modifier: Double,
-        constant: Int,
+        constant: Int = 1,
         ignoreNegative: Boolean = false
     ): Stat {
         if (modifier > 0.0) return stat * negativePercent(modifier, constant)
 
-        if (modifier == 0.0 || ignoreNegative) return stat
+        if (modifier < 0.0) {
+            if (!ignoreNegative) return stat * positivePercent(-modifier, constant)
+        }
 
-        return stat * positivePercent(modifier, constant)
+        return stat
     }
 
     fun calculateTrueDamage(damage: Stat, defense: Stat) =

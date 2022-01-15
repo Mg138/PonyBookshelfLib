@@ -1,10 +1,7 @@
 package io.github.mg138.bookshelf.entity.impl
 
 import io.github.mg138.bookshelf.Main
-import io.github.mg138.bookshelf.entity.BookStaticStatedEntity
-import io.github.mg138.bookshelf.stat.data.StatMap
-import io.github.mg138.bookshelf.stat.stat.StatSingle
-import io.github.mg138.bookshelf.stat.type.StatTypes
+import io.github.mg138.bookshelf.entity.BookEntity
 import io.github.mg138.bookshelf.utils.minus
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
@@ -28,9 +25,7 @@ import kotlin.jvm.internal.Ref
 import kotlin.math.roundToInt
 
 class DummyEntity(type: EntityType<DummyEntity>, world: World) :
-    BookStaticStatedEntity<DummyEntity>(type, world, StatMap().apply {
-        putStat(StatTypes.DefenseTypes.DefenseAqua, StatSingle(2000.0))
-    }) {
+    BookEntity<DummyEntity>(type, world) {
     companion object {
         val map: MutableMap<PlayerEntity, Pair<Ref.IntRef, MutableList<Float>>> = mutableMapOf()
 

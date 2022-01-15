@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier
 
 abstract class ModifierType(id: Identifier) :
     PercentageStatType(id), StatEvent.OnDamageCallback {
-    override val onDamagePriority = 1
+    override val onDamagePriority = 1000000000
 
     abstract class ModifierTypeTemplate(
         id: Identifier
@@ -24,7 +24,11 @@ abstract class ModifierType(id: Identifier) :
                 if (damagee is LivingEntity) {
                     DamageManager[damagee].forEach { (type, other) ->
                         if (type is DamageType) {
-                            DamageManager.replaceDamage(damagee, type, StatUtil.damageModifier(other, event.stat))
+                            DamageManager.replaceDamage(
+                                damagee,
+                                type,
+                                StatUtil.damageModifier(other, event.stat)
+                            )
                         }
                     }
                 }

@@ -6,7 +6,6 @@ import io.github.mg138.bookshelf.effect.Bleeding
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.template.*
-import io.github.mg138.bookshelf.utils.ObjectUtil
 import io.github.mg138.bookshelf.utils.ParticleUtil.spawnParticles
 import io.github.mg138.bookshelf.utils.StatUtil
 import io.github.mg138.bookshelf.utils.minus
@@ -100,7 +99,19 @@ object StatTypes {
 
         object DamageThunder : DamageType(Main.modId - "damage_thunder")
 
-        val types = ObjectUtil.getFieldsOfObject<DamageType, DamageTypes>()
+        val types = listOf(
+            DamageTrue,
+            DamagePhysical,
+            DamageTerra,
+            DamageTempus,
+            DamageIgnis,
+            DamageAqua,
+            DamageLumen,
+            DamageUmbra,
+            DamageNone,
+            DamageBleed,
+            DamageThunder
+        )
     }
 
     object DefenseTypes {
@@ -130,12 +141,21 @@ object StatTypes {
         object DefenseUmbra :
             DefenseType.DefenseTypeTemplate(Main.modId - "defense_umbra", DamageTypes.DamageUmbra)
 
-        val types = ObjectUtil.getFieldsOfObject<DefenseType, DefenseTypes>()
+        val types = listOf(
+            DefenseTrue,
+            DefensePhysical,
+            DefenseTerra,
+            DefenseTempus,
+            DefenseIgnis,
+            DefenseAqua,
+            DefenseLumen,
+            DefenseUmbra
+        )
     }
 
     object ModifierTypes {
         object ModifierOverall : ModifierType.StatTypeModifierTemplate(Main.modId - "modifier_overall") {
-            override fun condition(type: StatType) = true
+            override fun condition(type: StatType) = type is DamageType
         }
 
         object ModifierPhysical : ModifierType.StatTypeModifierTemplate(Main.modId - "modifier_physical") {
@@ -167,7 +187,16 @@ object StatTypes {
         }
 
 
-        val types = ObjectUtil.getFieldsOfObject<ModifierType, ModifierTypes>()
+        val types = listOf(
+            ModifierOverall,
+            ModifierPhysical,
+            ModifierTerra,
+            ModifierTempus,
+            ModifierIgnis,
+            ModifierAqua,
+            ModifierLumen,
+            ModifierUmbra
+        )
     }
 
 
@@ -182,7 +211,7 @@ object StatTypes {
             )
         })
 
-        val types = ObjectUtil.getFieldsOfObject<StatusType, StatusTypes>()
+        val types = listOf(StatusBleeding)
     }
 
     object PowerTypes {
@@ -195,7 +224,7 @@ object StatTypes {
 
                     DamageManager[damagee].forEach { (type, other) ->
                         if (type is DamageType) {
-                            DamageManager.queueDamage(damagee, type, other.modifier(p))
+                            DamageManager.replaceDamage(damagee, type, other.modifier(p))
                         }
                     }
 
@@ -241,7 +270,7 @@ object StatTypes {
         //        }
         //    }
 
-        val types = ObjectUtil.getFieldsOfObject<PowerType, PowerTypes>()
+        val types = listOf(PowerCritical, PowerDrain)
     }
 
     object ChanceTypes {
@@ -270,7 +299,7 @@ object StatTypes {
         //val CHANCE_SLOWNESS =
         //    object : ChanceType.ChanceTypeTemplate("chance_slowness", PowerTypes.POWER_SLOWNESS) {}
 
-        val types = ObjectUtil.getFieldsOfObject<ChanceType, ChanceTypes>()
+        val types = listOf(ChanceCritical, ChanceDrain)
     }
 
     object MiscTypes {
@@ -286,14 +315,13 @@ object StatTypes {
             fun canDamage(damager: PlayerEntity): Boolean {
                 return map[damager.uuid]?.let { (time, delay) ->
                     val d = abs(damager.world.time - time)
-                    //println("delay: $delay, delta: $d")
 
                     d >= delay
                 } ?: true
             }
         }
 
-        val types = ObjectUtil.getFieldsOfObject<StatType, MiscTypes>()
+        val types = listOf(AttackDelay)
     }
 
     val types = DamageTypes.types +

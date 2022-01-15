@@ -47,8 +47,9 @@ object DamageIndicatorManager {
         }
 
         constructor(
-            damage: Double, type: LoredStatType, world: World
-        ) : super(INDICATOR, world) {
+            damage: Double, type: LoredStatType, world: World,
+            x: Double, y: Double, z: Double
+        ) : super(world, x, y, z) {
             customName = type.indicator(StatSingle(damage))
         }
 
@@ -103,8 +104,7 @@ object DamageIndicatorManager {
         val yV = 0.15
         val zV = sin(rZ) / 6.0
 
-        val indicator = Indicator(damage, type, world)
-        indicator.teleport(x, y, z)
+        val indicator = Indicator(damage, type, world, x, y, z)
         indicator.velocity = Vec3d(xV, yV, zV)
         indicators += indicator
 

@@ -5,7 +5,6 @@ import io.github.mg138.bookshelf.item.BookItemSettings
 import io.github.mg138.bookshelf.item.SimpleBookStaticStatedItem
 import io.github.mg138.bookshelf.item.type.SimpleMeleeWeapon
 import io.github.mg138.bookshelf.stat.data.StatMap
-import io.github.mg138.bookshelf.stat.stat.StatRange
 import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.StatTypes
 import io.github.mg138.bookshelf.utils.minus
@@ -24,12 +23,9 @@ object FabricItem : SimpleBookStaticStatedItem(
     FabricItemSettings(), Items.PAPER,
     StatMap().apply {
         putStat(StatTypes.DamageTypes.DamageAqua, StatSingle(10000.0))
-        putStat(StatTypes.DamageTypes.DamageLumen, StatRange(10000.0, 1000000.0))
-        putStat(StatTypes.DamageTypes.DamageIgnis, StatSingle(10000.0))
-        putStat(StatTypes.DamageTypes.DamageTerra, StatSingle(10000.0))
-        putStat(StatTypes.DamageTypes.DamageTempus, StatSingle(10000.0))
-        putStat(StatTypes.ChanceTypes.ChanceCritical, StatSingle(2.0))
-        putStat(StatTypes.PowerTypes.PowerCritical, StatSingle(2.0))
+        putStat(StatTypes.ChanceTypes.ChanceCritical, StatSingle(0.5))
+        putStat(StatTypes.PowerTypes.PowerCritical, StatSingle(0.5))
+        putStat(StatTypes.ModifierTypes.ModifierOverall, StatSingle(-0.5))
     }
 ), SimpleMeleeWeapon {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {

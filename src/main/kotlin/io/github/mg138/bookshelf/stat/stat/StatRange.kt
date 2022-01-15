@@ -23,7 +23,7 @@ class StatRange(min: Double, max: Double) : Stat {
     }
 
     override fun modifier(mod: Double): Stat {
-        return StatRange(StatUtil.mod(min, mod), StatUtil.mod(max, mod))
+        return StatUtil.positiveModifier(this, mod)
     }
 
     override fun round(): Stat {
@@ -132,10 +132,7 @@ class StatRange(min: Double, max: Double) : Stat {
                     max = this.max
                 )
             } else {
-                StatRange(
-                    min = minimum,
-                    max = minimum
-                )
+                StatSingle(minimum)
             }
         }
         return this

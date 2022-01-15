@@ -40,9 +40,7 @@ object DamageManager {
     }
 
     fun replaceDamage(damagee: LivingEntity, type: StatType, damage: Stat) {
-        val damages = get(damagee)
-
-        damages[type] = damage
+        this[damagee][type] = damage
     }
 
     fun afterDamage(items: Map<ItemStack, StatedItem>, damager: LivingEntity, damagee: LivingEntity? = null) {
