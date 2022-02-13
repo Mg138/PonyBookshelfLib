@@ -4,7 +4,6 @@ import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.LoredStatType
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.bookshelf.stat.type.StatTypeManager
-import net.minecraft.util.Identifier
 
 @Suppress("UNUSED")
 open class StatMap(
@@ -24,34 +23,6 @@ open class StatMap(
     @Suppress("UNCHECKED_CAST")
     inline fun <reified T> filterType() = filterKeys { it is T } as MutableMap<T, Stat>
 
-    open fun toMap() = defaultMap().also { it.putAll(this) }
-
-    open fun computeIfPresent(type: StatType, action: (StatType, Stat) -> Stat) =
-        this[type]?.let { old ->
-            action(type, old)
-                .also { this[type] = it }
-        }
-
-    open fun computeIfAbsent(type: StatType, action: (StatType) -> Stat) =
-        this[type] ?: action(type)
-            .also { this[type] = it }
-
-    open fun computeIfPresent(type: StatType, action: (Stat) -> Stat) =
-        this[type]?.let { old ->
-            action(old)
-                .also { this[type] = it }
-        }
-
-    open fun computeIfAbsent(type: StatType, action: () -> Stat) =
-        this[type] ?: action()
-            .also { this[type] = it }
-
-    open fun containsType(type: StatType) = this.types().contains(type)
-    open fun isEmpty() = map.isEmpty()
-
-    open operator fun get(type: StatType) = this.getStat(type)
-    open operator fun set(type: StatType, stat: Stat) = this.putStat(type, stat)
-
     // Stated
 
     override fun getStatResult(type: StatType) = this.getStat(type)?.result() ?: 0.0
@@ -61,9 +32,11 @@ open class StatMap(
     override fun pairs(): List<Pair<StatType, Stat>> = map.entries.map { it.toPair() }
     override fun iterator() = this.pairs().iterator()
     override fun lores() = StatTypeManager.registeredTypes
-        .filter { this.containsType(it) }
+        .filter { this.has(it) }
         .filterIsInstance<LoredStatType>()
         .map { it.lore(this[it]!!) }
+
+    override fun has(type: StatType): Boolean = map.containsKey(type)
 
 
     // MutableStated
@@ -72,9 +45,13 @@ open class StatMap(
         stat.plus(map[type])
             .also { this[type] = it }
 
+    override fun addAll(stats: Stats?): Stats {
+        stats?.forEach { (type, stat) -> this.addStat(type, stat) }
+        return this
+    }
+
     override fun putStat(stat: Pair<StatType, Stat>) = this.putStat(stat.first, stat.second)
     override fun putStat(type: StatType, stat: Stat) = map.put(type, stat)
-    fun putStat(id: Identifier, stat: Stat) = StatTypeManager[id]?.let { putStat(it, stat) }
     override fun remove(type: StatType) = map.remove(type)
 
     // Any

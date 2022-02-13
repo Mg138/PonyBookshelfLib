@@ -11,7 +11,7 @@ abstract class DamageType(id: Identifier) :
     override val onDamagePriority = 0
 
     override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
-        DamageManager.queueDamage(event.damagee, this, event.stat)
+        DamageManager.queueDamage(event.damagee, this, event.stat, event.source)
 
         return ActionResult.PASS
     }

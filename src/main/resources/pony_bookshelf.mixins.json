@@ -7,7 +7,8 @@
   },
   "mixins": [
     "IndicatorMixin",
-    "ServerPlayNetworkHandlerMixin",
-    "ServerPlayNetworkHandlerSubclassMixin"
+    "LivingEntityMixin",
+    "ServerPlayerEntityMixin",
+    "ServerPlayNetworkHandlerMixin"
   ]
 }

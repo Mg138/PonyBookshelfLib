@@ -16,7 +16,6 @@ import net.minecraft.entity.mob.MobEntity.createMobAttributes
 import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.server.MinecraftServer
 import net.minecraft.text.LiteralText
 import net.minecraft.util.Arm
 import net.minecraft.util.registry.Registry
@@ -38,7 +37,17 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
                 .build()
         )
 
-        private fun tick(server: MinecraftServer) {
+        private fun avg(list: MutableList<Float>): Double {
+            return list
+                .sum()
+                .times(100.0)
+                .roundToInt()
+                .toFloat()
+                .div(100.0)
+                .div(list.size)
+        }
+
+        private fun tick() {
             val toRemove: MutableList<PlayerEntity> = mutableListOf()
 
             map.forEach { (player, pair) ->
@@ -51,7 +60,7 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
                 val list = pair.second
                 list[age % 20] = 0.0F
 
-                val avg = list.sum().roundToInt() / list.size
+                val avg = avg(list)
                 val str = "DPS: $avg"
                 player.sendMessage(LiteralText(str), true)
             }
@@ -64,7 +73,9 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
         fun register() {
             FabricDefaultAttributeRegistry.register(DUMMY, createMobAttributes())
 
-            ServerTickEvents.END_SERVER_TICK.register(this::tick)
+            ServerTickEvents.END_SERVER_TICK.register {
+                this.tick()
+            }
 
             ServerPlayConnectionEvents.DISCONNECT.register { handler, _ ->
                 map.remove(handler.player)

@@ -48,15 +48,10 @@ interface SimpleMeleeWeapon : MeleeWeapon {
             )
 
             if (hitResult != null) {
-                val entity = hitResult.entity
+                val damagee = hitResult.entity
 
-                if (entity is LivingEntity) {
-                    val items: MutableMap<ItemStack, StatedItem> = mutableMapOf()
-
-                    items[itemStack] = this
-                    items.putAll(DamageManager.getArmor(player))
-
-                    DamageManager.onPlayerAttackLivingEntity(player, entity, items)
+                if (damagee is LivingEntity) {
+                    DamageManager.attack(player, this.getStats(itemStack), damagee)
                 }
             }
         }

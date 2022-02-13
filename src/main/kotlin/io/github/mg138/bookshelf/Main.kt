@@ -1,13 +1,15 @@
 package io.github.mg138.bookshelf
 
 import eu.pb4.polymer.api.resourcepack.PolymerRPUtils
+import io.github.mg138.bookshelf.command.EffectCmd
 import io.github.mg138.bookshelf.command.StatTypeCmd
 import io.github.mg138.bookshelf.config.EntityConfig
 import io.github.mg138.bookshelf.config.ItemConfig
 import io.github.mg138.bookshelf.damage.DamageIndicatorManager
 import io.github.mg138.bookshelf.damage.DamageManager
-import io.github.mg138.bookshelf.effect.Bleeding
-import io.github.mg138.bookshelf.effect.Burning
+import io.github.mg138.bookshelf.effect.ActiveEffectManager
+import io.github.mg138.bookshelf.effect.impl.Bleeding
+import io.github.mg138.bookshelf.effect.impl.Burning
 import io.github.mg138.bookshelf.entity.impl.DummyEntity
 import io.github.mg138.bookshelf.item.test.FabricItem
 import io.github.mg138.bookshelf.projectile.ArrowProjectile
@@ -33,6 +35,8 @@ object Main : DedicatedServerModInitializer {
         Bleeding.register()
         Burning.register()
 
+        ActiveEffectManager.register()
+
         if (serverItemConfig.test) {
             FabricItem.register()
             logger.info("Item test enabled.")
@@ -46,6 +50,8 @@ object Main : DedicatedServerModInitializer {
 
         DamageIndicatorManager.register()
         DamageManager.register()
+
         StatTypeCmd.register()
+        EffectCmd.register()
     }
 }

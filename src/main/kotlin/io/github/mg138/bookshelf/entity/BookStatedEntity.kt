@@ -1,42 +1,30 @@
 package io.github.mg138.bookshelf.entity
 
-import io.github.mg138.bookshelf.stat.data.StatMap
-import io.github.mg138.bookshelf.stat.event.StatEvent
-import io.github.mg138.bookshelf.stat.type.StatType
-import io.github.mg138.bookshelf.utils.StatUtil.filterAndSort
 import net.minecraft.entity.EntityType
-import net.minecraft.entity.LivingEntity
-import net.minecraft.util.ActionResult
 import net.minecraft.world.World
 
 abstract class BookStatedEntity<T : BookStatedEntity<T>>(
     type: EntityType<T>, world: World
-) : BookEntity<T>(type, world) {
-    abstract fun getStatMap(): StatMap
-
-    fun getStatResult(type: StatType) =
-        getStatMap().getStatResult(type)
-
-    fun getStat(type: StatType) =
-        getStatMap().getStat(type)
-
-    fun types() =
-        getStatMap().types()
-
-    fun stats() =
-        getStatMap().stats()
-
-    fun pairs() =
-        getStatMap().pairs()
-
+) : BookEntity<T>(type, world), StatedEntity {
+    /*
     fun onBeingAttacked(
-        damager: LivingEntity
+        damager: Entity?,
+        source: DamageSource?
     ): ActionResult {
-        val sortedMap = getStatMap().filterAndSort<StatEvent.OnDamageCallback> { it.onDamagePriority }
+        if (damager == null) return ActionResult.PASS
+        if (damager !is LivingEntity) return ActionResult.PASS
+
+        val sortedMap = getStats().filterAndSort<StatEvent.OnDamageCallback> { it.onDamagePriority }
 
         for ((type, stat) in sortedMap) {
             val result = type.onDamage(
-                StatEvent.OnDamageCallback.OnDamageEvent(stat, this.getStatMap(), damager, this)
+                StatEvent.OnDamageCallback.OnDamageEvent(
+                    stat,
+                    this.getStats(),
+                    damager,
+                    this,
+                    source
+                )
             )
 
             if (result != ActionResult.PASS) return result
@@ -46,13 +34,17 @@ abstract class BookStatedEntity<T : BookStatedEntity<T>>(
     }
 
     fun afterBeingAttacked(
-        damager: LivingEntity
+        damager: LivingEntity, damageSource: DamageSource
     ): ActionResult {
-        val sortedMap = getStatMap().filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
+        val sortedMap = getStats().filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
 
         for ((type, stat) in sortedMap) {
             val result = type.afterDamage(
-                StatEvent.AfterDamageCallback.AfterDamageEvent(stat, this.getStatMap(), damager, this)
+                StatEvent.AfterDamageCallback.AfterDamageEvent(
+                    stat,
+                    this,
+                    damageSource
+                )
             )
 
             if (result != ActionResult.PASS) return result
@@ -60,4 +52,5 @@ abstract class BookStatedEntity<T : BookStatedEntity<T>>(
 
         return ActionResult.PASS
     }
+     */
 }

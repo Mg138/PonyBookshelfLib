@@ -2,7 +2,9 @@ package io.github.mg138.bookshelf.stat.type
 
 import io.github.mg138.bookshelf.Main
 import io.github.mg138.bookshelf.damage.DamageManager
-import io.github.mg138.bookshelf.effect.Bleeding
+import io.github.mg138.bookshelf.effect.ActiveEffectManager
+import io.github.mg138.bookshelf.effect.impl.Bleeding
+import io.github.mg138.bookshelf.entity.StatedEntity
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.template.*
@@ -10,15 +12,14 @@ import io.github.mg138.bookshelf.utils.ParticleUtil.spawnParticles
 import io.github.mg138.bookshelf.utils.StatUtil
 import io.github.mg138.bookshelf.utils.minus
 import net.minecraft.entity.LivingEntity
-import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.text.TextColor
 import net.minecraft.util.ActionResult
 import net.minecraft.util.math.Vec3d
-import java.lang.Double.min
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.min
 
 @Suppress("UNUSED")
 object StatTypes {
@@ -202,13 +203,14 @@ object StatTypes {
 
     object StatusTypes {
         object StatusBleeding : StatusType(Main.modId - "status_bleeding", { event ->
-            StatusEffectInstance(
-                Bleeding.BLEEDING,
-                80,
-                event.stat.result().toInt(),
-                true,
-                false
-            )
+            event.damagee.let {
+                ActiveEffectManager.addEffect(
+                    entity = it,
+                    duration = 80,
+                    power = event.stat.result(),
+                    effect = Bleeding
+                )
+            }
         })
 
         val types = listOf(StatusBleeding)
@@ -219,21 +221,23 @@ object StatTypes {
             fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
                 val damagee = event.damagee
 
-                if (damagee is LivingEntity) {
-                    val p = event.stat.result()
+                val p = event.stat.result()
 
-                    DamageManager[damagee].forEach { (type, other) ->
-                        if (type is DamageType) {
-                            DamageManager.replaceDamage(damagee, type, other.modifier(1 + p))
-                        }
+                DamageManager[damagee].map.flatMap { it.value }.forEach { (type, other) ->
+                    if (type is DamageType) {
+                        DamageManager.replaceDamageOfAllSource(
+                            damagee,
+                            type,
+                            StatUtil.positiveModifier(other, 1 + p)
+                        )
                     }
-
-                    val pos = damagee.pos.add(0.0, 1.0, 0.0)
-                    val dPos = Vec3d.ZERO
-                    val count = (15 * p).toInt()
-
-                    damagee.spawnParticles(ParticleTypes.CRIT, pos, count, dPos, 0.5)
                 }
+
+                val pos = damagee.pos.add(0.0, 1.0, 0.0)
+                val dPos = Vec3d.ZERO
+                val count = (15 * p).toInt()
+
+                damagee.spawnParticles(ParticleTypes.CRIT, pos, count, dPos, 0.5)
 
                 return ActionResult.PASS
             }
@@ -241,16 +245,17 @@ object StatTypes {
 
         object PowerDrain : PowerType(Main.modId - "power_drain") {
             fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
-                val damager = event.damager
+                val source = event.source
+                val damager = (source?.source as? LivingEntity) ?: return ActionResult.PASS
                 val damagee = event.damagee
 
-                val mostRecentDamage = damagee?.damageTracker?.mostRecentDamage ?: return ActionResult.PASS
+                val mostRecentDamage = damagee.damageTracker?.mostRecentDamage ?: return ActionResult.PASS
                 if (damager != mostRecentDamage.damageSource.source) return ActionResult.PASS
 
-                val maxHealth = damager.maxHealth.toDouble()
-                val healAmount = mostRecentDamage.damage * event.stat.result()
+                val maxHealth = damager.maxHealth
+                val healAmount = (mostRecentDamage.damage * event.stat.result()).toFloat()
 
-                min(maxHealth, (damager.health + healAmount))
+                damager.health = min(maxHealth, (damager.health + healAmount))
 
                 return ActionResult.PASS
             }
@@ -274,11 +279,13 @@ object StatTypes {
     }
 
     object ChanceTypes {
+        // TODO template
+
         object ChanceCritical : ChanceType(Main.modId - "chance_critical"), StatEvent.OnDamageCallback {
             override val onDamagePriority = 1000
 
             override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
-                val power = event.stats.getStat(PowerTypes.PowerCritical) ?: return ActionResult.PASS
+                val power = event.damageeStats?.getStat(PowerTypes.PowerCritical) ?: return ActionResult.PASS
                 val p = calculate(event.stat, power)
 
                 return PowerTypes.PowerCritical.onDamage(event.copy(stat = p))
@@ -289,7 +296,7 @@ object StatTypes {
             override val afterDamagePriority = 1000
 
             override fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
-                val power = event.stats.getStat(PowerTypes.PowerDrain) ?: return ActionResult.PASS
+                val power = event.damageeStats?.getStat(PowerTypes.PowerDrain) ?: return ActionResult.PASS
                 val p = calculate(event.stat, power)
 
                 return PowerTypes.PowerDrain.afterDamage(event.copy(stat = p))
@@ -303,6 +310,24 @@ object StatTypes {
     }
 
     object MiscTypes {
+        object Health : StatType(Main.modId - "health")
+
+        object MaxHealth : StatType(Main.modId - "max_health"), StatEvent.AfterDamageCallback {
+            override fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
+                val damagee = event.damagee
+                if (damagee is StatedEntity) {
+                    val stats = damagee.getStats()
+                    val health = stats[Health] ?: return ActionResult.PASS
+                    val max = stats[MaxHealth] ?: return ActionResult.PASS
+
+                    if (health > max) {
+                        stats.putStat(Health, max)
+                    }
+                }
+                return ActionResult.PASS
+            }
+        }
+
         object AttackDelay : StatType(Main.modId - "attack_delay") {
             private val map: MutableMap<UUID, Pair<Long, Int>> = mutableMapOf()
 
@@ -318,6 +343,24 @@ object StatTypes {
 
                     d >= delay
                 } ?: true
+            }
+        }
+
+        object FallResistance : StatType(Main.modId - "fall_resistance"), StatEvent.OnDamageCallback {
+            override val onDamagePriority = 2000000000
+
+            override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
+                event.source?.let { source ->
+                    if (source.isFromFalling) {
+                        val res = event.stat
+                        event.damageeStats?.forEach { (type, stat) ->
+                            if (type is DamageType) {
+                                DamageManager.replaceDamageOfAllSource(event.damagee, type, StatUtil.defense(stat, res))
+                            }
+                        }
+                    }
+                }
+                return ActionResult.PASS
             }
         }
 

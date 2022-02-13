@@ -5,7 +5,6 @@ import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.LoredStatType
 import io.github.mg138.bookshelf.utils.StatUtil
-import net.minecraft.entity.LivingEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 
@@ -20,13 +19,13 @@ abstract class DefenseType(id: Identifier) :
         override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
             val damagee = event.damagee
 
-            if (damagee is LivingEntity) {
-                DamageManager[damagee].let {
-                    it.computeIfPresent(damageType) { _, damage ->
+            DamageManager[damagee].map
+                .map { it.value }
+                .forEach { stats ->
+                    stats.computeIfPresent(damageType) { _, damage ->
                         act(damage, event.stat)
                     }
                 }
-            }
             return ActionResult.PASS
         }
 

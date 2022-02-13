@@ -1,12 +1,15 @@
 package io.github.mg138.bookshelf.damage
 
-import io.github.mg138.bookshelf.entity.BookStatedEntity
-import io.github.mg138.bookshelf.item.type.Armor
+import io.github.mg138.bookshelf.entity.StatedEntity
 import io.github.mg138.bookshelf.item.type.ProjectileThrower
 import io.github.mg138.bookshelf.item.type.StatedItem
+import io.github.mg138.bookshelf.stat.data.MutableStats
+import io.github.mg138.bookshelf.stat.data.StatMap
+import io.github.mg138.bookshelf.stat.data.Stats
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
-import io.github.mg138.player.data.ArmorManager
+import io.github.mg138.bookshelf.utils.StatUtil
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback
 import net.fabricmc.fabric.api.event.player.UseEntityCallback
 import net.fabricmc.fabric.api.event.player.UseItemCallback
@@ -19,174 +22,184 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.TypedActionResult
-import net.minecraft.util.hit.EntityHitResult
-import net.minecraft.world.World
 
 object DamageManager {
-    private val map: MutableMap<LivingEntity, MutableMap<StatType, Stat>> = mutableMapOf()
+    class DamageInfos {
+        val map: MutableMap<DamageSource, MutableStats> = mutableMapOf()
 
-    operator fun get(damagee: LivingEntity) = map.getOrPut(damagee) { mutableMapOf() }
+        operator fun get(source: DamageSource) = map.getOrPut(source) { StatMap() }
+    }
 
-    fun queueDamage(damagee: LivingEntity?, type: StatType, damage: Stat) {
+    private val map: MutableMap<LivingEntity, DamageInfos> = mutableMapOf()
+
+    operator fun get(damagee: LivingEntity) = map.getOrPut(damagee) { DamageInfos() }
+
+    fun queueDamage(damagee: LivingEntity?, type: StatType, damage: Stat, source: DamageSource?) {
         if (damagee == null) return
 
-        val damages = get(damagee)
+        val damages = this[damagee][source ?: DamageSource.GENERIC]
 
-        damages[type]?.let {
-            damages[type] = it + damage
-        } ?: run {
-            damages[type] = damage
-        }
+        damages[type] = damage + damages[type]
     }
 
-    fun replaceDamage(damagee: LivingEntity, type: StatType, damage: Stat) {
-        this[damagee][type] = damage
-    }
-
-    fun afterDamage(items: Map<ItemStack, StatedItem>, damager: LivingEntity, damagee: LivingEntity? = null) {
-        items.forEach { (itemStack, item) ->
-            item.afterAttackEntity(itemStack, damager, damagee)
-
-            if (damagee is BookStatedEntity<*>) {
-                damagee.afterBeingAttacked(damager)
+    fun replaceDamage(damagee: LivingEntity, type: StatType, damage: Stat, predicate: (DamageSource) -> Boolean) {
+        this[damagee].map.forEach { (source, stats) ->
+            if (predicate(source)) {
+                stats[type] = damage
             }
         }
     }
 
-    fun resolveDamage(
-        damagee: LivingEntity? = null,
-        damager: LivingEntity? = null,
-        items: Map<ItemStack, StatedItem> = mapOf(),
+    fun replaceDamage(
+        damagee: LivingEntity,
+        type: StatType,
+        damage: Stat,
         source: DamageSource = DamageSource.GENERIC
     ) {
-        val damages: MutableMap<StatType, Double> = mutableMapOf()
-
-        this.map[damagee]?.onEach { (type, stat) ->
-            val damage = stat.result()
-
-            damagee?.damage(source, damage.toFloat())
-
-            damages[type] = damage
-
-            if (damagee != null) {
-                DamageIndicatorManager.displayDamage(damage, type, damagee)
-            }
-
-            if (damager != null) {
-                afterDamage(items, damager, damagee)
-            }
-        }?.clear()
-
-        if (damagee != null) {
-            DamageEvent.AFTER_BOOK_DAMAGE.invoker().afterDamage(
-                DamageEvent.AfterBookDamageCallback.AfterBookDamageEvent(damager, damagee, items, damages)
-            )
-        }
-
-        this.map.remove(damagee)
+        replaceDamage(damagee, type, damage) { it == source }
     }
 
-    fun onPlayerAttackLivingEntity(
-        damager: ServerPlayerEntity,
-        damagee: LivingEntity?,
-        items: Map<ItemStack, StatedItem>
-    ): ActionResult {
-        for ((itemStack, item) in items) {
-            val result = item.onAttackEntity(itemStack, damager, damagee)
+    fun replaceDamageOfAllSource(
+        damagee: LivingEntity,
+        type: StatType,
+        damage: Stat
+    ) {
+        replaceDamage(damagee, type, damage) { true }
+    }
 
-            if (result != ActionResult.PASS) return result
-        }
-
-        if (damagee is BookStatedEntity<*>) {
-            damagee.onBeingAttacked(damager)
-        }
-
-        DamageEvent.ON_BOOK_DAMAGE.invoker().onDamage(
-            DamageEvent.OnBookDamageCallback.OnBookDamageEvent(damager, damagee, items)
+    private fun afterDamage(
+        damagee: LivingEntity,
+        damageeStats: Stats?,
+        damages: Map<DamageSource, Map<StatType, Double>>,
+        damager: Entity?,
+        source: DamageSource?
+    ) {
+        DamageEvent.AFTER_BOOK_DAMAGE.invoker().afterDamage(
+            DamageEvent.AfterBookDamageCallback.AfterBookDamageEvent(damagee, damages, damager, source)
         )
-
-        resolveDamage(damagee, damager, items, DamageSource.player(damager))
-
-        return ActionResult.PASS
+        if (damager is StatedEntity) {
+            StatUtil.afterDamage(damagee, damageeStats, damager, damager.getStats(), source)
+        }
     }
 
-    fun onPlayerAttack(
-        damager: ServerPlayerEntity,
-        damagee: Entity,
-        items: Map<ItemStack, StatedItem>
+    fun damage(
+        damagee: LivingEntity,
+        damageeStats: Stats? = null,
+        damager: Entity?,
+        damagerStats: Stats? = null,
+        source: DamageSource
     ): ActionResult {
-        if (damagee !is LivingEntity) return ActionResult.PASS
-        if (damagee is DamageIndicatorManager.Indicator) return ActionResult.FAIL
-        if (damagee.isDead) return ActionResult.FAIL
+        /*
+        DamageEvent.ON_BOOK_DAMAGE.invoker().onDamage(
+            DamageEvent.OnBookDamageCallback.OnBookDamageEvent(damager, damagee, )
+        )
+        */
 
-        return onPlayerAttackLivingEntity(damager, damagee, items)
+        return StatUtil.onDamage(damagee, damageeStats, damager, damagerStats, source)
     }
 
-    fun getArmor(player: ServerPlayerEntity): Map<ItemStack, StatedItem> {
-        val items: MutableMap<ItemStack, StatedItem> = mutableMapOf()
 
-        ArmorManager[player].asList().let { armorList ->
-            armorList.forEach {
-                val item = it.item
+    fun attack(
+        damager: LivingEntity,
+        damagerExtraStats: Stats? = null,
+        damagee: LivingEntity,
+        damageeExtraStats: Stats? = null,
+    ): ActionResult {
+        if (damager is StatedEntity && damagee is StatedEntity) {
+            val damagerStats = damager.getStats().addAll(damagerExtraStats)
+            val damageeStats = damagee.getStats().addAll(damageeExtraStats)
 
-                if (item is StatedItem) {
-                    items[it] = item
+            return damage(damagee, damageeStats, damager, damagerStats, DamageSource.mob(damager))
+        }
+
+        if (damager is StatedEntity) {
+            val damagerStats = damager.getStats().addAll(damagerExtraStats)
+
+            return damage(damagee, null, damager, damagerStats, DamageSource.mob(damager))
+        }
+
+        return damage(damagee, null, damager, null, DamageSource.mob(damager))
+    }
+
+    private fun resolveDamage() {
+        this.map.forEach { (damagee, damageInfo) ->
+            val damages: MutableMap<DamageSource, MutableMap<StatType, Double>> = mutableMapOf()
+
+            damageInfo.map.forEach { (source, stats) ->
+                val results: MutableMap<StatType, Double> = mutableMapOf()
+
+                stats.forEach { (type, stat) ->
+                    println("${damagee.displayName}, ${type.id}")
+                    val damage = stat.result()
+
+                    // TODO custom damage function!!
+                    damagee.damage(source, damage.toFloat())
+
+                    results[type] = damage
+
+                    DamageIndicatorManager.displayDamage(damage, type, damagee)
                 }
+
+                damages[source] = results
+
+                afterDamage(damagee, stats, damages, source.source, source)
             }
         }
 
-        return items
-    }
-
-    fun getItemInHand(player: ServerPlayerEntity, hand: Hand): Pair<ItemStack, StatedItem>? {
-        player.getStackInHand(hand).let { stackInHand ->
-            val item = stackInHand.item
-            if (item !is StatedItem || item is Armor) return null
-
-            return stackInHand to item
-        }
+        this.map.clear()
     }
 
     private fun onPlayerAttack(
         damager: PlayerEntity,
-        world: World,
-        hand: Hand,
         damagee: Entity,
-        hitResult: EntityHitResult?
+        hand: Hand
     ): ActionResult {
+        return ActionResult.FAIL
+
+        /*
         if (damager !is ServerPlayerEntity) return ActionResult.PASS
+        if (damagee !is LivingEntity) return ActionResult.PASS
+        if (damagee is DamageIndicatorManager.Indicator) return ActionResult.FAIL
+        if (damagee.isDead) return ActionResult.FAIL
 
-        val items: MutableMap<ItemStack, StatedItem> = mutableMapOf()
+        val item = damager.getStackInHand(hand).item
+        if (item !is StatedItem) {
+            return ActionResult.FAIL
+        }
 
-        getItemInHand(damager, hand)?.let { (itemStack, item) ->
-            items.put(itemStack, item)
-        } ?: return ActionResult.FAIL
-
-        items.putAll(getArmor(damager))
-
-        return onPlayerAttack(damager, damagee, items)
+        return ActionResult.PASS
+         */
     }
 
-    fun onPlayerUseItem(player: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
+    private fun onPlayerUseItem(player: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
         val itemStack = player.getStackInHand(hand)
 
-        if (player is ServerPlayerEntity) {
-            val item = itemStack.item
+        if (player !is ServerPlayerEntity) return TypedActionResult.pass(itemStack)
 
-            if (item is ProjectileThrower) {
-                item.onRightClick(player, itemStack)
-            }
+        val item = itemStack.item
+
+        if (item is ProjectileThrower) {
+            item.onRightClick(player, itemStack)
         }
+
         return TypedActionResult.pass(itemStack)
     }
 
     fun register() {
-        AttackEntityCallback.EVENT.register(this::onPlayerAttack)
+        AttackEntityCallback.EVENT.register { damager, _, hand, damagee, _ ->
+            onPlayerAttack(damager, damagee, hand)
+        }
+
         UseEntityCallback.EVENT.register { player, _, hand, _, _ ->
             onPlayerUseItem(player, hand).result
         }
+
         UseItemCallback.EVENT.register { player, _, hand ->
             onPlayerUseItem(player, hand)
+        }
+
+        ServerTickEvents.END_WORLD_TICK.register {
+            resolveDamage()
         }
     }
 }

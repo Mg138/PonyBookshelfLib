@@ -11,7 +11,6 @@ import net.minecraft.entity.*
 import net.minecraft.entity.projectile.thrown.ThrownEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.particle.ParticleTypes
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.math.Vec3d
@@ -62,26 +61,26 @@ class WandProjectile : ThrownEntity {
             entity.spawnParticles(ParticleTypes.CRIT, entity.pos, 4, Vec3d.ZERO, 0.0)
         }
 
-        fun onEntityHit(itemStack: ItemStack?, owner: Entity?, map: MutableMap<LivingEntity, Int>, entityHitResult: EntityHitResult) {
+        fun onEntityHit(
+            itemStack: ItemStack?,
+            owner: Entity?,
+            map: MutableMap<LivingEntity, Int>,
+            entityHitResult: EntityHitResult
+        ) {
             val item = itemStack?.item as? StatedItem ?: return
 
-            (owner as? ServerPlayerEntity)?.let { player ->
-                val entity = entityHitResult.entity
+            (owner as? LivingEntity)?.let { damager ->
+                val damagee = entityHitResult.entity
 
-                if (entity is LivingEntity) {
-                    val delay = map[entity] ?: 0
+                if (damagee is LivingEntity) {
+                    val delay = map[damagee] ?: 0
 
                     if (delay <= 0) {
-                        val items: MutableMap<ItemStack, StatedItem> = mutableMapOf()
+                        DamageManager.attack(damager, item.getStats(itemStack), damagee)
 
-                        items[itemStack] = item
-                        items.putAll(DamageManager.getArmor(player))
-
-                        DamageManager.onPlayerAttackLivingEntity(player, entity, items)
-
-                        map[entity] = DELAY
+                        map[damagee] = DELAY
                     } else {
-                        map.computeIfPresent(entity) { _, it -> it - 1 }
+                        map.computeIfPresent(damagee) { _, it -> it - 1 }
                     }
                 }
             }

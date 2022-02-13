@@ -27,6 +27,7 @@ repositories {
     maven("https://maven.shedaniel.me/")
     maven("https://maven.nucleoid.xyz")
     maven("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
+    maven("https://ladysnake.jfrog.io/artifactory/mods")
     mavenCentral()
 }
 
@@ -52,7 +53,10 @@ dependencies {
     val polymerVersion: String by project
     modImplementation("eu.pb4:polymer:$polymerVersion")
 
-    //modImplementation("software.bernie.geckolib:geckolib-fabric-1.18:3.0.24")
+
+    val palVersion: String by project
+    modImplementation("io.github.ladysnake:PlayerAbilityLib:$palVersion")
+    include("io.github.ladysnake:PlayerAbilityLib:$palVersion")
 
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }

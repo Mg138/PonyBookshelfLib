@@ -1,7 +1,13 @@
 package io.github.mg138.bookshelf.utils
 
+import io.github.mg138.bookshelf.stat.data.Stats
+import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
+import net.minecraft.entity.Entity
+import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.damage.DamageSource
+import net.minecraft.util.ActionResult
 import kotlin.math.max
 
 object StatUtil {
@@ -14,6 +20,96 @@ object StatUtil {
             .sortedBy { sortBy(it) }
             .map { it to map[it as StatType]!! }
             .toList()
+    }
+
+    private fun Iterable<Pair<StatEvent.OnDamageCallback, Stat>>.onDamageLoop(
+        damagee: LivingEntity,
+        damageeStats: Stats?,
+        damager: Entity?,
+        damagerStats: Stats?,
+        source: DamageSource? = DamageSource.GENERIC
+    ): ActionResult {
+        this.forEach { (type, stat) ->
+            val result = type.onDamage(
+                StatEvent.OnDamageCallback.OnDamageEvent(
+                    stat, damagee, damageeStats, damager, damagerStats, source
+                )
+            )
+            if (result != ActionResult.PASS) return result
+        }
+
+        return ActionResult.PASS
+    }
+
+    fun onDamage(
+        damagee: LivingEntity,
+        damageeStats: Stats?,
+        damager: Entity?,
+        damagerStats: Stats?,
+        source: DamageSource? = DamageSource.GENERIC
+    ): ActionResult {
+        damagerStats
+            ?.filterAndSort<StatEvent.OnDamageCallback> { it.onDamagePriority }
+            ?.onDamageLoop(damagee, damageeStats, damager, damagerStats, source)
+            .takeIf { it == ActionResult.PASS }
+            ?.run { return this }
+
+        damageeStats
+            ?.filterAndSort<StatEvent.OnDamageCallback> { it.onDamagePriority }
+            ?.onDamageLoop(damagee, damageeStats, damager, damagerStats, source)
+            .takeIf { it == ActionResult.PASS }
+            ?.run { return this }
+
+
+        return ActionResult.PASS
+    }
+
+    private fun Iterable<Pair<StatEvent.AfterDamageCallback, Stat>>.afterDamageLoop(
+        damagee: LivingEntity,
+        damageeStats: Stats?,
+        damager: Entity?,
+        damagerStats: Stats?,
+        source: DamageSource? = DamageSource.GENERIC
+    ): ActionResult {
+        this.forEach { (type, stat) ->
+            val result = type.afterDamage(
+                StatEvent.AfterDamageCallback.AfterDamageEvent(
+                    stat, damagee, damageeStats, damager, damagerStats, source
+                )
+            )
+            if (result != ActionResult.PASS) return result
+        }
+
+        return ActionResult.PASS
+    }
+
+    fun afterDamage(
+        damagee: LivingEntity,
+        damageeStats: Stats?,
+        damager: Entity?,
+        damagerStats: Stats?,
+        source: DamageSource? = DamageSource.GENERIC
+    ): ActionResult {
+        damagerStats
+            ?.filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
+            ?.afterDamageLoop(damagee, damageeStats, damager, damagerStats, source)
+            .takeIf { it == ActionResult.PASS }
+            ?.run { return this }
+
+        damageeStats
+            ?.filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
+            ?.afterDamageLoop(damagee, damageeStats, damager, damagerStats, source)
+            .takeIf { it == ActionResult.PASS }
+            ?.run { return this }
+
+        return ActionResult.PASS
+    }
+
+    fun mod(a: Double, m: Double): Double {
+        if (a < 0.0) {
+            return a / m
+        }
+        return a * m
     }
 
     private fun percent(m: Double, k: Int) = max(m / (m + k), 0.0)
@@ -51,7 +147,7 @@ object StatUtil {
      * - modifier < 0: stat gets bigger, but limited at 2x
      * - modifier = 0: ignored
      */
-    private fun negativeModifier(
+    fun negativeModifier(
         stat: Stat,
         modifier: Double,
         constant: Int = 1,

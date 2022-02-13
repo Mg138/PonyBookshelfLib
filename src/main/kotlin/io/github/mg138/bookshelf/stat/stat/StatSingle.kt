@@ -11,7 +11,7 @@ class StatSingle(private val stat: Double) : Stat {
     }
 
     override fun modifier(mod: Double): Stat {
-        return StatUtil.positiveModifier(this, mod)
+        return StatSingle(StatUtil.mod(stat, mod))
     }
 
     override operator fun plus(increment: Stat?): StatSingle {

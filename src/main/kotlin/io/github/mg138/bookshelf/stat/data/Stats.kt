@@ -6,9 +6,19 @@ import net.minecraft.text.Text
 
 interface Stats : Iterable<Pair<StatType, Stat>> {
     fun getStatResult(type: StatType): Double
+
     fun getStat(type: StatType): Stat?
+
+    fun has(type: StatType): Boolean
+
+    operator fun get(type: StatType) = this.getStat(type)
+
+
     fun types(): Set<StatType>
+
     fun stats(): Collection<Stat>
+
     fun pairs(): List<Pair<StatType, Stat>>
+
     fun lores(): Iterable<Text>
 }

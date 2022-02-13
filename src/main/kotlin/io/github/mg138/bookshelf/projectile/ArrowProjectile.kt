@@ -14,7 +14,6 @@ import net.minecraft.entity.SpawnGroup
 import net.minecraft.entity.projectile.ArrowEntity
 import net.minecraft.entity.projectile.thrown.ThrownEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.hit.EntityHitResult
 import net.minecraft.util.math.Vec3d
@@ -46,20 +45,13 @@ class ArrowProjectile : ThrownEntity, PolymerEntity {
     override fun onEntityHit(entityHitResult: EntityHitResult) {
         val item = itemStack?.item as? StatedItem ?: return
 
-        itemStack?.let { itemStack ->
-            (owner as? ServerPlayerEntity)?.let { player ->
-                val entity = entityHitResult.entity
+        (owner as? LivingEntity)?.let { damager ->
+            val damagee = entityHitResult.entity
 
-                if (entity is LivingEntity) {
-                    val items: MutableMap<ItemStack, StatedItem> = mutableMapOf()
+            if (damagee is LivingEntity) {
+                DamageManager.attack(damager, item.getStats(itemStack), damagee)
 
-                    items[itemStack] = item
-                    items.putAll(DamageManager.getArmor(player))
-
-                    DamageManager.onPlayerAttackLivingEntity(player, entity, items)
-
-                    this.discard()
-                }
+                this.discard()
             }
         }
     }

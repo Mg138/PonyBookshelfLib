@@ -4,7 +4,6 @@ import io.github.mg138.bookshelf.damage.DamageManager
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.bookshelf.utils.StatUtil
-import net.minecraft.entity.LivingEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 
@@ -21,17 +20,17 @@ abstract class ModifierType(id: Identifier) :
             if (condition(event)) {
                 val damagee = event.damagee
 
-                if (damagee is LivingEntity) {
-                    DamageManager[damagee].forEach { (type, other) ->
-                        if (type is DamageType) {
-                            DamageManager.replaceDamage(
-                                damagee,
-                                type,
-                                StatUtil.damageModifier(other, event.stat)
-                            )
-                        }
+                DamageManager[damagee]
+                    .map
+                    .flatMap { it.value }
+                    .filter { it.first is DamageType }
+                    .forEach { (type, other) ->
+                        DamageManager.replaceDamageOfAllSource(
+                            damagee,
+                            type,
+                            StatUtil.damageModifier(other, event.stat)
+                        )
                     }
-                }
             }
             return ActionResult.PASS
         }
@@ -45,13 +44,18 @@ abstract class ModifierType(id: Identifier) :
         override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
             val damagee = event.damagee
 
-            if (damagee is LivingEntity) {
-                DamageManager[damagee].forEach { (type, other) ->
-                    if (condition(type)) {
-                        DamageManager.replaceDamage(damagee, type, other.modifier(event.stat.result()))
-                    }
+            DamageManager[damagee]
+                .map
+                .flatMap { it.value }
+                .filter { condition(it.first) }
+                .forEach { (type, other) ->
+                    DamageManager.queueDamage(
+                        damagee,
+                        type,
+                        other.modifier(event.stat.result()),
+                        event.source
+                    )
                 }
-            }
             return ActionResult.PASS
         }
     }

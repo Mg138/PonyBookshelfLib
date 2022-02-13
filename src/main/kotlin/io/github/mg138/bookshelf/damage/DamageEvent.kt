@@ -1,16 +1,16 @@
 package io.github.mg138.bookshelf.damage
 
 import io.github.mg138.bookshelf.damage.DamageEvent.AfterBookDamageCallback
-import io.github.mg138.bookshelf.damage.DamageEvent.OnBookDamageCallback
-import io.github.mg138.bookshelf.item.type.StatedItem
 import io.github.mg138.bookshelf.stat.type.StatType
 import net.fabricmc.fabric.api.event.Event
 import net.fabricmc.fabric.api.event.EventFactory
+import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
-import net.minecraft.item.ItemStack
+import net.minecraft.entity.damage.DamageSource
 import net.minecraft.util.ActionResult
 
 object DamageEvent {
+    /*
     fun interface OnBookDamageCallback {
         data class OnBookDamageEvent(
             val damager: LivingEntity,
@@ -34,13 +34,14 @@ object DamageEvent {
             ActionResult.PASS
         }
     }
+     */
 
     fun interface AfterBookDamageCallback {
         data class AfterBookDamageEvent(
-            val damager: LivingEntity?,
-            val damagee: LivingEntity?,
-            val items: Map<ItemStack, StatedItem>,
-            val damages: Map<StatType, Double>
+            val damagee: LivingEntity,
+            val damages: Map<DamageSource, Map<StatType, Double>>,
+            val damager: Entity?,
+            val source: DamageSource?
         )
 
         fun afterDamage(event: AfterBookDamageEvent): ActionResult

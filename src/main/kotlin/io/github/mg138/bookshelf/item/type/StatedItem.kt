@@ -1,12 +1,8 @@
 package io.github.mg138.bookshelf.item.type
 
 import io.github.mg138.bookshelf.stat.data.Stats
-import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.type.StatType
-import io.github.mg138.bookshelf.utils.StatUtil.filterAndSort
-import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.util.ActionResult
 
 interface StatedItem {
     fun getStats(itemStack: ItemStack?): Stats
@@ -26,6 +22,7 @@ interface StatedItem {
     fun pairs(itemStack: ItemStack?) =
         getStats(itemStack).pairs()
 
+    /*
     fun onAttackEntity(
         itemStack: ItemStack,
         damager: LivingEntity,
@@ -35,7 +32,7 @@ interface StatedItem {
 
         for ((type, stat) in sortedMap) {
             val result = type.onDamage(
-                StatEvent.OnDamageCallback.OnDamageEvent(stat, this.getStats(itemStack), damager, damagee)
+                StatEvent.OnDamageCallback.OnDamageEvent(stat, this.getStats(itemStack), damager, damagee, DamageSource.mob(damager))
             )
 
             if (result != ActionResult.PASS) return result
@@ -47,13 +44,14 @@ interface StatedItem {
     fun afterAttackEntity(
         itemStack: ItemStack?,
         damager: LivingEntity,
-        damagee: LivingEntity?
+        damagee: LivingEntity?,
+        source: DamageSource?
     ): ActionResult {
         val sortedMap = pairs(itemStack).filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
 
         for ((type, stat) in sortedMap) {
             val result = type.afterDamage(
-                StatEvent.AfterDamageCallback.AfterDamageEvent(stat, this.getStats(itemStack), damager, damagee)
+                StatEvent.AfterDamageCallback.AfterDamageEvent(stat, damagee, source)
             )
 
             if (result != ActionResult.PASS) return result
@@ -61,4 +59,5 @@ interface StatedItem {
 
         return ActionResult.PASS
     }
+     */
 }
