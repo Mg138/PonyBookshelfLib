@@ -41,7 +41,7 @@ class StatRange(min: Double, max: Double) : Stat {
 
     override fun result() = this.withPercentage(rand.nextDouble())
 
-    override operator fun plus(increment: Stat?): StatRange {
+    override operator fun plus(increment: Stat?): Stat {
         if (increment == null) return this
 
         return when (increment) {
@@ -49,18 +49,15 @@ class StatRange(min: Double, max: Double) : Stat {
                 min = min + increment.min,
                 max = max + increment.max
             )
-            is StatSingle -> {
-                val it = increment.result()
-                StatRange(
-                    min = min + it,
-                    max = max + it
-                )
-            }
+            is StatSingle -> StatSingle(
+                this.result() + increment.result()
+            )
+
             else -> throw IllegalArgumentException(incompatible(increment))
         }
     }
 
-    override operator fun minus(decrement: Stat?): StatRange {
+    override operator fun minus(decrement: Stat?): Stat {
         if (decrement == null) return this
 
         return when (decrement) {
@@ -68,13 +65,9 @@ class StatRange(min: Double, max: Double) : Stat {
                 min = min - decrement.min,
                 max = max - decrement.max
             )
-            is StatSingle -> {
-                val it = decrement.result()
-                StatRange(
-                    min = min + it,
-                    max = max + it
-                )
-            }
+            is StatSingle -> StatSingle(
+                this.result() - decrement.result()
+            )
             else -> throw IllegalArgumentException(incompatible(decrement))
         }
     }

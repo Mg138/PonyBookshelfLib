@@ -8,6 +8,9 @@ import net.minecraft.entity.damage.DamageSource
 import net.minecraft.util.ActionResult
 
 class StatEvent {
+    interface OffensiveStat
+    interface DefensiveStat
+
     fun interface OnDamageCallback {
         data class OnDamageEvent(
             val stat: Stat,

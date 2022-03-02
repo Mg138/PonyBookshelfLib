@@ -1,18 +1,16 @@
 package io.github.mg138.bookshelf.entity.impl
 
 import io.github.mg138.bookshelf.Main
+import io.github.mg138.bookshelf.damage.BookDamageable
 import io.github.mg138.bookshelf.entity.BookEntity
+import io.github.mg138.bookshelf.entity.bookAttributes
 import io.github.mg138.bookshelf.utils.minus
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricEntityTypeBuilder
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
-import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityType
-import net.minecraft.entity.EquipmentSlot
-import net.minecraft.entity.SpawnGroup
+import net.minecraft.entity.*
 import net.minecraft.entity.damage.DamageSource
-import net.minecraft.entity.mob.MobEntity.createMobAttributes
 import net.minecraft.entity.passive.VillagerEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
@@ -24,9 +22,9 @@ import kotlin.jvm.internal.Ref
 import kotlin.math.roundToInt
 
 class DummyEntity(type: EntityType<DummyEntity>, world: World) :
-    BookEntity<DummyEntity>(type, world) {
+    LivingEntity(type, world), BookEntity, BookDamageable {
     companion object {
-        val map: MutableMap<PlayerEntity, Pair<Ref.IntRef, MutableList<Float>>> = mutableMapOf()
+        val map: MutableMap<PlayerEntity, Pair<Ref.IntRef, MutableList<Double>>> = mutableMapOf()
 
         val DUMMY: EntityType<DummyEntity> = Registry.register(
             Registry.ENTITY_TYPE,
@@ -37,14 +35,13 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
                 .build()
         )
 
-        private fun avg(list: MutableList<Float>): Double {
+        private fun avg(list: MutableList<Double>): Double {
             return list
                 .sum()
                 .times(100.0)
-                .roundToInt()
-                .toFloat()
-                .div(100.0)
                 .div(list.size)
+                .roundToInt()
+                .div(100.0)
         }
 
         private fun tick() {
@@ -58,7 +55,7 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
                 }
 
                 val list = pair.second
-                list[age % 20] = 0.0F
+                list[age % 20] = 0.0
 
                 val avg = avg(list)
                 val str = "DPS: $avg"
@@ -71,8 +68,6 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
         }
 
         fun register() {
-            FabricDefaultAttributeRegistry.register(DUMMY, createMobAttributes())
-
             ServerTickEvents.END_SERVER_TICK.register {
                 this.tick()
             }
@@ -80,6 +75,8 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
             ServerPlayConnectionEvents.DISCONNECT.register { handler, _ ->
                 map.remove(handler.player)
             }
+
+            FabricDefaultAttributeRegistry.register(DUMMY, bookAttributes())
         }
     }
 
@@ -105,24 +102,29 @@ class DummyEntity(type: EntityType<DummyEntity>, world: World) :
     override fun pushAwayFrom(entity: Entity?) {
     }
 
-    override fun applyDamage(source: DamageSource, amount: Float) {
-        val damager = source.attacker
+    override fun takeKnockback(strength: Double, x: Double, z: Double) {
+    }
+
+    override fun applyDamage(source: DamageSource?, amount: Float) {
+    }
+
+    override fun bookDamage(amount: Double, source: DamageSource) {
+        super.bookDamage(amount, source)
+
+        val damager = source.source
         if (damager !is PlayerEntity) return
 
         val (age, list) = map.getOrPut(damager) {
             Pair(
                 Ref.IntRef().apply { element = 0 },
-                ArrayList<Float>().apply {
+                ArrayList<Double>().apply {
                     for (i in 0 until 20) {
-                        this.add(0.0F)
+                        this.add(0.0)
                     }
                 }
             )
         }
         val time = age.element % 20
         list[time] += amount
-    }
-
-    override fun takeKnockback(strength: Double, x: Double, z: Double) {
     }
 }

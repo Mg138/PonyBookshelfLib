@@ -45,7 +45,7 @@ object ActiveEffectManager {
             map.forEach { (effect, info) ->
                 val dT = currentTime - info.startTime
 
-                if (dT > info.duration) {
+                if (dT > info.duration || info.entity.isDead) {
                     removed += effect
                 } else {
                     if (dT > 0) {

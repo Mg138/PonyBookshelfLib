@@ -9,6 +9,7 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.mg138.bookshelf.command.suggestion.EffectSuggestion
 import io.github.mg138.bookshelf.effect.ActiveEffectManager
 import io.github.mg138.bookshelf.effect.StatusEffectManager
+import io.github.mg138.bookshelf.utils.toLiteralText
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback
 import net.minecraft.command.argument.EntityArgumentType
 import net.minecraft.command.argument.EntityArgumentType.getEntity
@@ -24,7 +25,7 @@ import net.minecraft.text.LiteralText
 object EffectCmd {
     private fun listEffects(context: CommandContext<ServerCommandSource>): Int {
         val source = context.source
-        source.sendFeedback(LiteralText("Effects:"), false)
+        source.sendFeedback("Effects:".toLiteralText(), false)
 
         StatusEffectManager.effects.forEach { (id, _) ->
             source.sendFeedback(
@@ -56,6 +57,7 @@ object EffectCmd {
                 literal("book")
                     .then(
                         literal("effect")
+                            .requires(CommandUtil.admin())
                             .then(
                                 literal("list_ids")
                                     .executes(::listEffects)

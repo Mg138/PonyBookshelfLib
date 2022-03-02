@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier
 abstract class StatusType(
     id: Identifier,
     private val effect: (StatEvent.OnDamageCallback.OnDamageEvent) -> Unit
-) : LoredStatType(id), StatEvent.OnDamageCallback {
+) : LoredStatType(id), StatEvent.OnDamageCallback, StatEvent.OffensiveStat {
     override val onDamagePriority = 10
 
     override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {

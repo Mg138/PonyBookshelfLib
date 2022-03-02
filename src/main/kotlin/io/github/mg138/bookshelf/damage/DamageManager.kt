@@ -2,12 +2,13 @@ package io.github.mg138.bookshelf.damage
 
 import io.github.mg138.bookshelf.entity.StatedEntity
 import io.github.mg138.bookshelf.item.type.ProjectileThrower
-import io.github.mg138.bookshelf.item.type.StatedItem
 import io.github.mg138.bookshelf.stat.data.MutableStats
 import io.github.mg138.bookshelf.stat.data.StatMap
 import io.github.mg138.bookshelf.stat.data.Stats
 import io.github.mg138.bookshelf.stat.stat.Stat
+import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.StatType
+import io.github.mg138.bookshelf.stat.type.StatTypes
 import io.github.mg138.bookshelf.utils.StatUtil
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback
@@ -70,7 +71,7 @@ object DamageManager {
     private fun afterDamage(
         damagee: LivingEntity,
         damageeStats: Stats?,
-        damages: Map<DamageSource, Map<StatType, Double>>,
+        damages: Map<StatType, Double>,
         damager: Entity?,
         source: DamageSource?
     ) {
@@ -80,6 +81,26 @@ object DamageManager {
         if (damager is StatedEntity) {
             StatUtil.afterDamage(damagee, damageeStats, damager, damager.getStats(), source)
         }
+    }
+
+    fun vanillaDamage(
+        damagee: LivingEntity,
+        damageeStats: Stats? = null,
+        damage: Float,
+        source: DamageSource
+    ): ActionResult {
+        val stats = StatMap()
+        val damageDouble = damage.toDouble()
+
+        if (source.isFire) {
+            stats.addStat(StatTypes.DamageTypes.DamageIgnis, StatSingle(damageDouble))
+        } else if (source == DamageSource.DROWN) {
+            stats.addStat(StatTypes.DamageTypes.DamageAqua, StatSingle(damageDouble))
+        } else {
+            stats.addStat(StatTypes.DamageTypes.DamageNone, StatSingle(damageDouble))
+        }
+
+        return StatUtil.onDamage(damagee, damageeStats, null, stats, source)
     }
 
     fun damage(
@@ -106,14 +127,14 @@ object DamageManager {
         damageeExtraStats: Stats? = null,
     ): ActionResult {
         if (damager is StatedEntity && damagee is StatedEntity) {
-            val damagerStats = damager.getStats().addAll(damagerExtraStats)
-            val damageeStats = damagee.getStats().addAll(damageeExtraStats)
+            val damagerStats = damager.getStats().copy().addAll(damagerExtraStats)
+            val damageeStats = damagee.getStats().copy().addAll(damageeExtraStats)
 
             return damage(damagee, damageeStats, damager, damagerStats, DamageSource.mob(damager))
         }
 
         if (damager is StatedEntity) {
-            val damagerStats = damager.getStats().addAll(damagerExtraStats)
+            val damagerStats = damager.getStats().copy().addAll(damagerExtraStats)
 
             return damage(damagee, null, damager, damagerStats, DamageSource.mob(damager))
         }
@@ -123,52 +144,28 @@ object DamageManager {
 
     private fun resolveDamage() {
         this.map.forEach { (damagee, damageInfo) ->
-            val damages: MutableMap<DamageSource, MutableMap<StatType, Double>> = mutableMapOf()
-
             damageInfo.map.forEach { (source, stats) ->
-                val results: MutableMap<StatType, Double> = mutableMapOf()
+                val damages: MutableMap<StatType, Double> = mutableMapOf()
 
                 stats.forEach { (type, stat) ->
-                    println("${damagee.displayName}, ${type.id}")
                     val damage = stat.result()
 
-                    // TODO custom damage function!!
-                    damagee.damage(source, damage.toFloat())
+                    if (damagee is BookDamageable) {
+                        damagee.bookDamage(damage, source)
+                    } else {
+                        damagee.damage(source, damage.toFloat())
+                    }
 
-                    results[type] = damage
+                    damages[type] = damage
 
                     DamageIndicatorManager.displayDamage(damage, type, damagee)
                 }
-
-                damages[source] = results
 
                 afterDamage(damagee, stats, damages, source.source, source)
             }
         }
 
         this.map.clear()
-    }
-
-    private fun onPlayerAttack(
-        damager: PlayerEntity,
-        damagee: Entity,
-        hand: Hand
-    ): ActionResult {
-        return ActionResult.FAIL
-
-        /*
-        if (damager !is ServerPlayerEntity) return ActionResult.PASS
-        if (damagee !is LivingEntity) return ActionResult.PASS
-        if (damagee is DamageIndicatorManager.Indicator) return ActionResult.FAIL
-        if (damagee.isDead) return ActionResult.FAIL
-
-        val item = damager.getStackInHand(hand).item
-        if (item !is StatedItem) {
-            return ActionResult.FAIL
-        }
-
-        return ActionResult.PASS
-         */
     }
 
     private fun onPlayerUseItem(player: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
@@ -186,8 +183,8 @@ object DamageManager {
     }
 
     fun register() {
-        AttackEntityCallback.EVENT.register { damager, _, hand, damagee, _ ->
-            onPlayerAttack(damager, damagee, hand)
+        AttackEntityCallback.EVENT.register { _, _, _, _, _ ->
+            ActionResult.FAIL
         }
 
         UseEntityCallback.EVENT.register { player, _, hand, _, _ ->

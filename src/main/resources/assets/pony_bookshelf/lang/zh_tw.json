@@ -1,4 +1,7 @@
 {
+    "pony_bookshelf.player.info.title": "玩家資訊",
+    "pony_bookshelf.player.info.text.health": "血量: %s",
+
     "entity.pony_bookshelf.test_dummy_entity": "測試假人",
     "item.pony_bookshelf.fabric_item": "Fabric Item",
 

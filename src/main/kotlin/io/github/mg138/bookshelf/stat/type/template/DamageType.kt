@@ -7,7 +7,7 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 
 abstract class DamageType(id: Identifier) :
-    LoredStatType(id), StatEvent.OnDamageCallback {
+    LoredStatType(id), StatEvent.OnDamageCallback, StatEvent.OffensiveStat {
     override val onDamagePriority = 0
 
     override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {

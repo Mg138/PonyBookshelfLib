@@ -100,7 +100,7 @@ object StatTypes {
 
         object DamageThunder : DamageType(Main.modId - "damage_thunder")
 
-        val types = listOf(
+        val types: List<StatType> = listOf(
             DamageTrue,
             DamagePhysical,
             DamageTerra,
@@ -142,7 +142,7 @@ object StatTypes {
         object DefenseUmbra :
             DefenseType.DefenseTypeTemplate(Main.modId - "defense_umbra", DamageTypes.DamageUmbra)
 
-        val types = listOf(
+        val types: List<StatType> = listOf(
             DefenseTrue,
             DefensePhysical,
             DefenseTerra,
@@ -188,7 +188,7 @@ object StatTypes {
         }
 
 
-        val types = listOf(
+        val types: List<StatType> = listOf(
             ModifierOverall,
             ModifierPhysical,
             ModifierTerra,
@@ -213,7 +213,7 @@ object StatTypes {
             }
         })
 
-        val types = listOf(StatusBleeding)
+        val types: List<StatType> = listOf(StatusBleeding)
     }
 
     object PowerTypes {
@@ -275,13 +275,18 @@ object StatTypes {
         //        }
         //    }
 
-        val types = listOf(PowerCritical, PowerDrain)
+        val types: List<StatType> = listOf(
+            PowerCritical,
+            PowerDrain
+        )
     }
 
     object ChanceTypes {
         // TODO template
 
-        object ChanceCritical : ChanceType(Main.modId - "chance_critical"), StatEvent.OnDamageCallback {
+        object ChanceCritical : ChanceType(Main.modId - "chance_critical"),
+            StatEvent.OnDamageCallback,
+            StatEvent.OffensiveStat {
             override val onDamagePriority = 1000
 
             override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
@@ -292,7 +297,9 @@ object StatTypes {
             }
         }
 
-        object ChanceDrain : ChanceType(Main.modId - "chance_drain"), StatEvent.AfterDamageCallback {
+        object ChanceDrain : ChanceType(Main.modId - "chance_drain"),
+            StatEvent.AfterDamageCallback,
+            StatEvent.OffensiveStat {
             override val afterDamagePriority = 1000
 
             override fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
@@ -306,13 +313,13 @@ object StatTypes {
         //val CHANCE_SLOWNESS =
         //    object : ChanceType.ChanceTypeTemplate("chance_slowness", PowerTypes.POWER_SLOWNESS) {}
 
-        val types = listOf(ChanceCritical, ChanceDrain)
+        val types: List<StatType> = listOf(ChanceCritical, ChanceDrain)
     }
 
     object MiscTypes {
         object Health : StatType(Main.modId - "health")
 
-        object MaxHealth : StatType(Main.modId - "max_health"), StatEvent.AfterDamageCallback {
+        object MaxHealth : StatType(Main.modId - "max_health"), StatEvent.AfterDamageCallback, StatEvent.DefensiveStat {
             override fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
                 val damagee = event.damagee
                 if (damagee is StatedEntity) {
@@ -328,7 +335,7 @@ object StatTypes {
             }
         }
 
-        object AttackDelay : StatType(Main.modId - "attack_delay") {
+        object AttackDelay : StatType(Main.modId - "attack_delay"), StatEvent.OffensiveStat {
             private val map: MutableMap<UUID, Pair<Long, Int>> = mutableMapOf()
 
             fun setDelay(damager: PlayerEntity, delay: Int) {
@@ -346,7 +353,8 @@ object StatTypes {
             }
         }
 
-        object FallResistance : StatType(Main.modId - "fall_resistance"), StatEvent.OnDamageCallback {
+        object FallResistance : StatType(Main.modId - "fall_resistance"), StatEvent.OnDamageCallback,
+            StatEvent.DefensiveStat {
             override val onDamagePriority = 2000000000
 
             override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
@@ -364,10 +372,15 @@ object StatTypes {
             }
         }
 
-        val types = listOf(AttackDelay)
+        val types: List<StatType> = listOf(
+            Health,
+            MaxHealth,
+            AttackDelay,
+            FallResistance
+        )
     }
 
-    val types = DamageTypes.types +
+    val types: List<StatType> = DamageTypes.types +
             DefenseTypes.types +
             ModifierTypes.types +
             StatusTypes.types +

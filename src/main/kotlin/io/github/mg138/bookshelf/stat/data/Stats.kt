@@ -13,7 +13,6 @@ interface Stats : Iterable<Pair<StatType, Stat>> {
 
     operator fun get(type: StatType) = this.getStat(type)
 
-
     fun types(): Set<StatType>
 
     fun stats(): Collection<Stat>
@@ -21,4 +20,6 @@ interface Stats : Iterable<Pair<StatType, Stat>> {
     fun pairs(): List<Pair<StatType, Stat>>
 
     fun lores(): Iterable<Text>
+
+    fun copy(): MutableStats
 }

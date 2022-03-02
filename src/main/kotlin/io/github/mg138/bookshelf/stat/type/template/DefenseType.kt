@@ -9,7 +9,7 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.Identifier
 
 abstract class DefenseType(id: Identifier) :
-    LoredStatType(id), StatEvent.OnDamageCallback {
+    LoredStatType(id), StatEvent.OnDamageCallback, StatEvent.DefensiveStat {
     override val onDamagePriority = 10000000
 
     abstract class DefenseTypeTemplate(

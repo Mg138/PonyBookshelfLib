@@ -8,11 +8,11 @@ import io.github.mg138.bookshelf.stat.data.StatMap
 import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.StatTypes
 import io.github.mg138.bookshelf.utils.minus
+import io.github.mg138.bookshelf.utils.toLiteralText
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.text.LiteralText
 import net.minecraft.util.Hand
 import net.minecraft.util.TypedActionResult
 import net.minecraft.world.World
@@ -29,7 +29,7 @@ object FabricItem : SimpleBookStaticStatedItem(
     }
 ), SimpleMeleeWeapon {
     override fun use(world: World, user: PlayerEntity, hand: Hand): TypedActionResult<ItemStack> {
-        user.sendMessage(LiteralText("uwu"), false)
+        user.sendMessage("uwu".toLiteralText(), false)
 
         return super.use(world, user, hand)
     }

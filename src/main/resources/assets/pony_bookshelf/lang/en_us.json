@@ -1,4 +1,7 @@
 {
+    "pony_bookshelf.player.info.title": "Player Information",
+    "pony_bookshelf.player.info.text.health": "Health: %s",
+
     "entity.pony_bookshelf.test_dummy_entity": "Test Dummy",
     "item.pony_bookshelf.fabric_item": "Fabric Item",
 

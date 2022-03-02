@@ -13,7 +13,7 @@ open class StatMap(
         val EMPTY
             get() = StatMap()
 
-        fun defaultMap(): MutableMap<StatType, Stat> = mutableMapOf()
+        fun <K, V> defaultMap(): MutableMap<K, V> = mutableMapOf()
     }
 
     constructor(stats: StatMap) : this(stats.map)
@@ -37,7 +37,9 @@ open class StatMap(
         .map { it.lore(this[it]!!) }
 
     override fun has(type: StatType): Boolean = map.containsKey(type)
-
+    override fun copy() = StatMap().also {
+        it.addAll(this)
+    }
 
     // MutableStated
 

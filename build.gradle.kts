@@ -53,10 +53,8 @@ dependencies {
     val polymerVersion: String by project
     modImplementation("eu.pb4:polymer:$polymerVersion")
 
-
-    val palVersion: String by project
-    modImplementation("io.github.ladysnake:PlayerAbilityLib:$palVersion")
-    include("io.github.ladysnake:PlayerAbilityLib:$palVersion")
+    val sidebarApiVersion: String by project
+    modImplementation("eu.pb4:sidebar-api:$sidebarApiVersion")
 
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }

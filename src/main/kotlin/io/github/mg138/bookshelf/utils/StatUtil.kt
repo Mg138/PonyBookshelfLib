@@ -1,14 +1,19 @@
 package io.github.mg138.bookshelf.utils
 
+import io.github.mg138.bookshelf.entity.StatedEntity
 import io.github.mg138.bookshelf.stat.data.Stats
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
 import io.github.mg138.bookshelf.stat.type.StatType
+import io.github.mg138.bookshelf.stat.type.StatTypes
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
 import net.minecraft.util.ActionResult
 import kotlin.math.max
+
+fun StatedEntity.maxHealthStat() = this.getStat(StatTypes.MiscTypes.MaxHealth)
+fun StatedEntity.healthStat() = this.getStat(StatTypes.MiscTypes.Health)
 
 object StatUtil {
     inline fun <reified T> Iterable<Pair<StatType, Stat>>.filterAndSort(crossinline sortBy: (T) -> Int): List<Pair<T, Stat>> {
@@ -49,15 +54,17 @@ object StatUtil {
         source: DamageSource? = DamageSource.GENERIC
     ): ActionResult {
         damagerStats
+            ?.filter { it.first is StatEvent.OffensiveStat }
             ?.filterAndSort<StatEvent.OnDamageCallback> { it.onDamagePriority }
             ?.onDamageLoop(damagee, damageeStats, damager, damagerStats, source)
-            .takeIf { it == ActionResult.PASS }
+            .takeIf { it != ActionResult.PASS }
             ?.run { return this }
 
         damageeStats
+            ?.filter { it.first is StatEvent.DefensiveStat }
             ?.filterAndSort<StatEvent.OnDamageCallback> { it.onDamagePriority }
             ?.onDamageLoop(damagee, damageeStats, damager, damagerStats, source)
-            .takeIf { it == ActionResult.PASS }
+            .takeIf { it != ActionResult.PASS }
             ?.run { return this }
 
 
@@ -91,15 +98,17 @@ object StatUtil {
         source: DamageSource? = DamageSource.GENERIC
     ): ActionResult {
         damagerStats
+            ?.filter { it.first is StatEvent.OffensiveStat }
             ?.filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
             ?.afterDamageLoop(damagee, damageeStats, damager, damagerStats, source)
-            .takeIf { it == ActionResult.PASS }
+            .takeIf { it != ActionResult.PASS }
             ?.run { return this }
 
         damageeStats
+            ?.filter { it.first is StatEvent.DefensiveStat }
             ?.filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
             ?.afterDamageLoop(damagee, damageeStats, damager, damagerStats, source)
-            .takeIf { it == ActionResult.PASS }
+            .takeIf { it != ActionResult.PASS }
             ?.run { return this }
 
         return ActionResult.PASS

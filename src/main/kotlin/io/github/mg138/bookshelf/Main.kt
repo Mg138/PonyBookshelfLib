@@ -11,8 +11,10 @@ import io.github.mg138.bookshelf.effect.ActiveEffectManager
 import io.github.mg138.bookshelf.effect.impl.Bleeding
 import io.github.mg138.bookshelf.effect.impl.Burning
 import io.github.mg138.bookshelf.entity.impl.DummyEntity
+import io.github.mg138.bookshelf.entity.impl.TestZombie
 import io.github.mg138.bookshelf.item.test.FabricItem
 import io.github.mg138.bookshelf.projectile.ArrowProjectile
+import io.github.mg138.bookshelf.player.PlayerSidebar
 import io.github.mg138.bookshelf.stat.type.StatType
 import io.github.mg138.bookshelf.stat.type.StatTypes
 import net.fabricmc.api.DedicatedServerModInitializer
@@ -42,8 +44,9 @@ object Main : DedicatedServerModInitializer {
             logger.info("Item test enabled.")
         }
 
+        DummyEntity.register()
         if (serverEntityConfig.test) {
-            DummyEntity.register()
+            TestZombie.register()
             logger.info("Entity test enabled.")
         }
         ArrowProjectile.register()
@@ -53,5 +56,7 @@ object Main : DedicatedServerModInitializer {
 
         StatTypeCmd.register()
         EffectCmd.register()
+
+        PlayerSidebar.register()
     }
 }
