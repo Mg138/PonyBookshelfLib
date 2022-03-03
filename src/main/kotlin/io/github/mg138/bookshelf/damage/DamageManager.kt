@@ -68,21 +68,6 @@ object DamageManager {
         replaceDamage(damagee, type, damage) { true }
     }
 
-    private fun afterDamage(
-        damagee: LivingEntity,
-        damageeStats: Stats?,
-        damages: Map<StatType, Double>,
-        damager: Entity?,
-        source: DamageSource?
-    ) {
-        DamageEvent.AFTER_BOOK_DAMAGE.invoker().afterDamage(
-            DamageEvent.AfterBookDamageCallback.AfterBookDamageEvent(damagee, damages, damager, source)
-        )
-        if (damager is StatedEntity) {
-            StatUtil.afterDamage(damagee, damageeStats, damager, damager.getStats(), source)
-        }
-    }
-
     fun vanillaDamage(
         damagee: LivingEntity,
         damageeStats: Stats? = null,
@@ -103,6 +88,24 @@ object DamageManager {
         return StatUtil.onDamage(damagee, damageeStats, null, stats, source)
     }
 
+    private fun afterDamage(
+        damagee: LivingEntity,
+        damager: Entity?,
+        damageResults: Map<StatType, Double>,
+        source: DamageSource?
+    ) {
+        DamageEvent.AFTER_BOOK_DAMAGE.invoker().afterDamage(
+            DamageEvent.AfterBookDamageCallback.AfterBookDamageEvent(damagee, damageResults, damager, source)
+        )
+        if (damagee is StatedEntity && damager is StatedEntity) {
+            StatUtil.afterDamage(damagee, damagee.getStats(), damager, damager.getStats(), damageResults, source)
+        } else if (damager is StatedEntity) {
+            StatUtil.afterDamage(damagee, null, damager, damager.getStats(), damageResults, source)
+        } else if (damagee is StatedEntity) {
+            StatUtil.afterDamage(damagee, damagee.getStats(), damager, null, damageResults, source)
+        }
+    }
+
     fun damage(
         damagee: LivingEntity,
         damageeStats: Stats? = null,
@@ -110,15 +113,8 @@ object DamageManager {
         damagerStats: Stats? = null,
         source: DamageSource
     ): ActionResult {
-        /*
-        DamageEvent.ON_BOOK_DAMAGE.invoker().onDamage(
-            DamageEvent.OnBookDamageCallback.OnBookDamageEvent(damager, damagee, )
-        )
-        */
-
         return StatUtil.onDamage(damagee, damageeStats, damager, damagerStats, source)
     }
-
 
     fun attack(
         damager: LivingEntity,
@@ -139,29 +135,35 @@ object DamageManager {
             return damage(damagee, null, damager, damagerStats, DamageSource.mob(damager))
         }
 
+        if (damagee is StatedEntity) {
+            val damageeStats = damagee.getStats().copy().addAll(damageeExtraStats)
+
+            return damage(damagee, damageeStats, damager, null, DamageSource.mob(damager))
+        }
+
         return damage(damagee, null, damager, null, DamageSource.mob(damager))
     }
 
     private fun resolveDamage() {
         this.map.forEach { (damagee, damageInfo) ->
-            damageInfo.map.forEach { (source, stats) ->
-                val damages: MutableMap<StatType, Double> = mutableMapOf()
+            damageInfo.map.forEach { (source, damages) ->
+                val damageResults: MutableMap<StatType, Double> = mutableMapOf()
 
-                stats.forEach { (type, stat) ->
-                    val damage = stat.result()
+                damages.forEach { (type, stat) ->
+                    val damageResult = stat.result()
 
                     if (damagee is BookDamageable) {
-                        damagee.bookDamage(damage, source)
+                        damagee.bookDamage(damageResult, source)
                     } else {
-                        damagee.damage(source, damage.toFloat())
+                        damagee.damage(source, damageResult.toFloat())
                     }
 
-                    damages[type] = damage
+                    damageResults[type] = damageResult
 
-                    DamageIndicatorManager.displayDamage(damage, type, damagee)
+                    DamageIndicatorManager.displayDamage(damageResult, type, damagee)
                 }
 
-                afterDamage(damagee, stats, damages, source.source, source)
+                afterDamage(damagee, source.source, damageResults, source)
             }
         }
 

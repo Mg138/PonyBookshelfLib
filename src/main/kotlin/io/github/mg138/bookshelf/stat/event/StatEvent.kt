@@ -2,6 +2,7 @@ package io.github.mg138.bookshelf.stat.event
 
 import io.github.mg138.bookshelf.stat.data.Stats
 import io.github.mg138.bookshelf.stat.stat.Stat
+import io.github.mg138.bookshelf.stat.type.StatType
 import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.damage.DamageSource
@@ -34,6 +35,7 @@ class StatEvent {
             val damageeStats: Stats?,
             val damager: Entity?,
             val damagerStats: Stats?,
+            val damageResults: Map<StatType, Double>,
             val source: DamageSource?
         )
 

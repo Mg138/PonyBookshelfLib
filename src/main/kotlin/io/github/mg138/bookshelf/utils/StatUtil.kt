@@ -76,12 +76,13 @@ object StatUtil {
         damageeStats: Stats?,
         damager: Entity?,
         damagerStats: Stats?,
+        damageResults: Map<StatType, Double>,
         source: DamageSource? = DamageSource.GENERIC
     ): ActionResult {
         this.forEach { (type, stat) ->
             val result = type.afterDamage(
                 StatEvent.AfterDamageCallback.AfterDamageEvent(
-                    stat, damagee, damageeStats, damager, damagerStats, source
+                    stat, damagee, damageeStats, damager, damagerStats, damageResults, source
                 )
             )
             if (result != ActionResult.PASS) return result
@@ -95,19 +96,20 @@ object StatUtil {
         damageeStats: Stats?,
         damager: Entity?,
         damagerStats: Stats?,
+        damageResults: Map<StatType, Double>,
         source: DamageSource? = DamageSource.GENERIC
     ): ActionResult {
         damagerStats
             ?.filter { it.first is StatEvent.OffensiveStat }
             ?.filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
-            ?.afterDamageLoop(damagee, damageeStats, damager, damagerStats, source)
+            ?.afterDamageLoop(damagee, damageeStats, damager, damagerStats, damageResults, source)
             .takeIf { it != ActionResult.PASS }
             ?.run { return this }
 
         damageeStats
             ?.filter { it.first is StatEvent.DefensiveStat }
             ?.filterAndSort<StatEvent.AfterDamageCallback> { it.afterDamagePriority }
-            ?.afterDamageLoop(damagee, damageeStats, damager, damagerStats, source)
+            ?.afterDamageLoop(damagee, damageeStats, damager, damagerStats, damageResults, source)
             .takeIf { it != ActionResult.PASS }
             ?.run { return this }
 

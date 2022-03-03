@@ -10,6 +10,7 @@ import io.github.mg138.bookshelf.damage.DamageManager
 import io.github.mg138.bookshelf.effect.ActiveEffectManager
 import io.github.mg138.bookshelf.effect.impl.Bleeding
 import io.github.mg138.bookshelf.effect.impl.Burning
+import io.github.mg138.bookshelf.effect.impl.FallResistance
 import io.github.mg138.bookshelf.entity.impl.DummyEntity
 import io.github.mg138.bookshelf.entity.impl.TestZombie
 import io.github.mg138.bookshelf.item.test.FabricItem
@@ -36,6 +37,7 @@ object Main : DedicatedServerModInitializer {
 
         Bleeding.register()
         Burning.register()
+        FallResistance.register()
 
         ActiveEffectManager.register()
 

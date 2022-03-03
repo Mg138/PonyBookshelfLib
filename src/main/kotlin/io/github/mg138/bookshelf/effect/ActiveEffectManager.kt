@@ -13,9 +13,10 @@ object ActiveEffectManager {
                 effect.end(info)
             }
         } else {
-            map[entity]?.remove(effect)?.run {
-                effect.end(this)
+            map[entity]?.get(effect)?.let {
+                effect.end(it)
             }
+            map[entity]?.remove(effect)
         }
     }
 

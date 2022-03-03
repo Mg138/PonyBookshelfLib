@@ -7,11 +7,14 @@ import io.github.mg138.bookshelf.effect.impl.Bleeding
 import io.github.mg138.bookshelf.entity.StatedEntity
 import io.github.mg138.bookshelf.stat.event.StatEvent
 import io.github.mg138.bookshelf.stat.stat.Stat
+import io.github.mg138.bookshelf.stat.stat.StatSingle
 import io.github.mg138.bookshelf.stat.type.template.*
 import io.github.mg138.bookshelf.utils.ParticleUtil.spawnParticles
 import io.github.mg138.bookshelf.utils.StatUtil
+import io.github.mg138.bookshelf.utils.healthStat
+import io.github.mg138.bookshelf.utils.maxHealthStat
 import io.github.mg138.bookshelf.utils.minus
-import net.minecraft.entity.LivingEntity
+import net.minecraft.entity.damage.DamageSource
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.text.TextColor
@@ -219,19 +222,23 @@ object StatTypes {
     object PowerTypes {
         object PowerCritical : PowerType(Main.modId - "power_critical") {
             fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
+                val source = event.source ?: return ActionResult.PASS
                 val damagee = event.damagee
 
                 val p = event.stat.result()
 
-                DamageManager[damagee].map.flatMap { it.value }.forEach { (type, other) ->
-                    if (type is DamageType) {
-                        DamageManager.replaceDamageOfAllSource(
-                            damagee,
-                            type,
-                            StatUtil.positiveModifier(other, 1 + p)
-                        )
+                DamageManager[damagee].map
+                    .flatMap { it.value }
+                    .forEach { (type, other) ->
+                        if (type is DamageType) {
+                            DamageManager.replaceDamage(
+                                damagee,
+                                type,
+                                StatUtil.positiveModifier(other, 1 + p),
+                                source
+                            )
+                        }
                     }
-                }
 
                 val pos = damagee.pos.add(0.0, 1.0, 0.0)
                 val dPos = Vec3d.ZERO
@@ -246,16 +253,17 @@ object StatTypes {
         object PowerDrain : PowerType(Main.modId - "power_drain") {
             fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
                 val source = event.source
-                val damager = (source?.source as? LivingEntity) ?: return ActionResult.PASS
-                val damagee = event.damagee
+                val damager = (source?.source as? StatedEntity) ?: return ActionResult.PASS
+                val damage = event.damageResults
+                    .map { it.value }
+                    .sum()
 
-                val mostRecentDamage = damagee.damageTracker?.mostRecentDamage ?: return ActionResult.PASS
-                if (damager != mostRecentDamage.damageSource.source) return ActionResult.PASS
+                val maxHealth = damager.maxHealthStat() ?: return ActionResult.PASS
+                val maxHealthDelta = (maxHealth - damager.healthStat()).result()
+                val healAmount = damage * event.stat.result()
+                val fixedHealAmount = min(healAmount, maxHealthDelta)
 
-                val maxHealth = damager.maxHealth
-                val healAmount = (mostRecentDamage.damage * event.stat.result()).toFloat()
-
-                damager.health = min(maxHealth, (damager.health + healAmount))
+                damager.getStats().addStat(MiscTypes.Health, StatSingle(fixedHealAmount))
 
                 return ActionResult.PASS
             }
@@ -282,15 +290,13 @@ object StatTypes {
     }
 
     object ChanceTypes {
-        // TODO template
-
         object ChanceCritical : ChanceType(Main.modId - "chance_critical"),
             StatEvent.OnDamageCallback,
             StatEvent.OffensiveStat {
             override val onDamagePriority = 1000
 
             override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
-                val power = event.damageeStats?.getStat(PowerTypes.PowerCritical) ?: return ActionResult.PASS
+                val power = event.damagerStats?.getStat(PowerTypes.PowerCritical) ?: return ActionResult.PASS
                 val p = calculate(event.stat, power)
 
                 return PowerTypes.PowerCritical.onDamage(event.copy(stat = p))
@@ -303,7 +309,7 @@ object StatTypes {
             override val afterDamagePriority = 1000
 
             override fun afterDamage(event: StatEvent.AfterDamageCallback.AfterDamageEvent): ActionResult {
-                val power = event.damageeStats?.getStat(PowerTypes.PowerDrain) ?: return ActionResult.PASS
+                val power = event.damagerStats?.getStat(PowerTypes.PowerDrain) ?: return ActionResult.PASS
                 val p = calculate(event.stat, power)
 
                 return PowerTypes.PowerDrain.afterDamage(event.copy(stat = p))
@@ -358,13 +364,16 @@ object StatTypes {
             override val onDamagePriority = 2000000000
 
             override fun onDamage(event: StatEvent.OnDamageCallback.OnDamageEvent): ActionResult {
-                event.source?.let { source ->
-                    if (source.isFromFalling) {
-                        val res = event.stat
-                        event.damageeStats?.forEach { (type, stat) ->
-                            if (type is DamageType) {
-                                DamageManager.replaceDamageOfAllSource(event.damagee, type, StatUtil.defense(stat, res))
-                            }
+                val res = event.stat
+                DamageManager[event.damagee].map.forEach { (source, damages) ->
+                    if (source == DamageSource.FALL) {
+                        damages.forEach { (type, stat) ->
+                            DamageManager.replaceDamage(
+                                event.damagee,
+                                type,
+                                StatUtil.defense(stat, res),
+                                source
+                            )
                         }
                     }
                 }
